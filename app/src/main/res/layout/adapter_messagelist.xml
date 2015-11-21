@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:test="http://schemas.android.com/tools"
+    class="android.support.v7.widget.CardView"
+    android:layout_width="match_parent"
+    android:layout_marginTop="6dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/item_card_holder"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="@dimen/cardview_default_radius"
+    android:theme="@style/CardView.Light">
+
+    <LinearLayout
+        android:paddingTop="6dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:weightSum="3"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:layout_margin="4dp">
+
+            <TextView
+                android:id="@+id/messagelist_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="标题"
+                android:textSize="@dimen/abc_text_size_subhead_material"/>
+
+            <TextView
+                android:id="@+id/messagelist_item_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="60"
+                android:maxLines="3"
+                test:text="又一家中国公司要赴美上市，虽然这家名“芯原”IC设计公司大家不熟悉，但他是给谷歌等互联网公司定制芯片的，也给很多中国公司定制芯片"
+                android:textSize="@dimen/abc_text_size_caption_material" android:layout_weight="4"
+                android:layout_below="@+id/messagelist_item_title"
+                />
+
+        </RelativeLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" android:layout_marginBottom="4dp">
+            <TextView
+                android:id="@+id/item_starttime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="起始时间：2015.11.10.14：02"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/item_endtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="截止时间：2015.11.10.14：02"
+                android:textSize="14sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/message_username"
+                android:layout_marginLeft="2dp"
+                android:text="发送人：老师"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</view>
+

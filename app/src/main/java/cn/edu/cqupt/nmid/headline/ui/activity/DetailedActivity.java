@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
 import cn.edu.cqupt.nmid.headline.ui.activity.base.BaseFragmentActivity;
 import cn.edu.cqupt.nmid.headline.ui.fragment.WebViewFragment;
 
@@ -21,7 +24,7 @@ public class DetailedActivity extends BaseFragmentActivity {
     return WebViewFragment.newInstance(getIntent().getExtras());
   }
 
-  public static void startActivity(Context context, Feed feed) {
+  public static void startActivity(Context context, FreshNews feed) {
     Intent intent = new Intent(context, DetailedActivity.class);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
     intent.putExtra(WebViewFragment.PARCELABLE_KEY, feed);

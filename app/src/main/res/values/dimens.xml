@@ -1,7 +1,7 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">20dp</dimen>
+    <dimen name="activity_vertical_margin">20dp</dimen>
     <dimen name="drawerweigth">300dp</dimen>
     <dimen name="drawerheigth_half">120dp</dimen>
     <dimen name="ic_menu_size">24dp</dimen>
@@ -27,4 +27,5 @@
     <dimen name="margin_card_between">0dp</dimen>
 
     <dimen name="margin_left_toolbar_content">62dp</dimen>
+    <dimen name="login_textsize">16sp</dimen>
 </resources>

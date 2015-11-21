@@ -12,6 +12,7 @@ import im.fir.sdk.version.AppVersion;
 
 /**
  * Created by leon on 15/5/16.
+ * Correct by xwysun use 1.3.5SDK and do not check the sdk DOC 15/11/20
  * Check for update via Fir.im or wandoujia.You need to use a Theme.AppCompat theme (or descendant)
  * with this activity
  */
@@ -20,9 +21,9 @@ public class FIRUtils {
   public final static void checkForUpdate(Context context, boolean isShowToast) {
     VersionCheckCallback versionCheckCallback = callback(context, isShowToast);
     if (BuildConfig.DEBUG) {
-      FIR.checkForUpdateInFIR(context, FIR.GENERAL_KEY, versionCheckCallback);
+      FIR.checkForUpdateInFIR(FIR.GENERAL_KEY, versionCheckCallback);
     } else {
-      FIR.checkForUpdateInAppStore(context, versionCheckCallback);
+      FIR.checkForUpdateInAppStore(versionCheckCallback);
     }
   }
 

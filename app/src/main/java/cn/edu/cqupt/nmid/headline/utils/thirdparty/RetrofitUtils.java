@@ -46,13 +46,15 @@ public class RetrofitUtils {
 
   public static Retrofit getCachedAdapter(String endpoint) {
     Cache cache = null;
-    OkHttpClient okHttpClient = null;
+    OkHttpClient okHttpClient = new OkHttpClient();
+    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+    okHttpClient.interceptors().add(logging);
     Retrofit adapter;
     try {
       File cacheDir =
           new File(GlobalContext.getInstance().getCacheDir().getPath(), "pictures.json");
       cache = new Cache(cacheDir, 10 * 1024 * 1024);
-      okHttpClient = new OkHttpClient();
       okHttpClient.setCache(cache);
     } catch (Exception e) {
       e.printStackTrace();

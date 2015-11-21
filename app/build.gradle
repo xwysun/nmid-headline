@@ -63,9 +63,10 @@ dependencies {
   compile 'com.github.chrisbanes.photoview:library:1.2.3'
   compile 'com.jpardogo.materialtabstrip:library:1.0.6'
   //compile 'com.malinskiy:superrecyclerview:1.1.0'
-  compile 'im.fir:sdk:1.2.2'
+  //  compile 'im.fir:sdk:1.2.2'
   compile 'io.reactivex:rxandroid:1.0.1'
   compile files('libs/tbs.jar')
+  compile files('libs/Bughd_android_sdk_v1.3.4.jar')
 }
 
 

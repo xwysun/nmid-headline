@@ -14,6 +14,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cn.edu.cqupt.nmid.headline.R;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
+import cn.edu.cqupt.nmid.headline.ui.fragment.WebViewFragment;
 import cn.edu.cqupt.nmid.headline.utils.LollipopUtils;
 import com.hannesdorfmann.swipeback.Position;
 import com.hannesdorfmann.swipeback.SwipeBack;
@@ -29,6 +31,7 @@ public abstract class BaseFragmentActivity extends AppCompatActivity {
   @InjectView(R.id.toolbar_holder) public RelativeLayout mToolbarHolder;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
+
     setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
     super.onCreate(savedInstanceState);
     // Init the swipe back

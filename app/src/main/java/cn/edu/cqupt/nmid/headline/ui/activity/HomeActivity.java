@@ -7,16 +7,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cn.edu.cqupt.nmid.headline.R;
 import cn.edu.cqupt.nmid.headline.support.event.NightModeEvent;
 import cn.edu.cqupt.nmid.headline.support.pref.KEYS;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.MessageGson;
 import cn.edu.cqupt.nmid.headline.ui.fragment.base.FavFeedFragment;
 import cn.edu.cqupt.nmid.headline.ui.fragment.ImagesFeedFragment;
 import cn.edu.cqupt.nmid.headline.ui.fragment.NavigationDrawerFragment;
@@ -24,6 +28,11 @@ import cn.edu.cqupt.nmid.headline.ui.fragment.SlidingTabFragment;
 import cn.edu.cqupt.nmid.headline.utils.LogUtils;
 import cn.edu.cqupt.nmid.headline.utils.LollipopUtils;
 import cn.edu.cqupt.nmid.headline.utils.PreferenceUtils;
+import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
+import cn.sharesdk.framework.statistics.a;
+import retrofit.Callback;
+import retrofit.Response;
+
 import com.squareup.otto.Subscribe;
 
 /**
@@ -40,6 +49,7 @@ public class HomeActivity extends AppCompatActivity
 
   NavigationDrawerFragment mNavigationDrawerFragment;
   private String TAG = LogUtils.makeLogTag(HomeActivity.class);
+  private boolean hasUserinfo=false;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -111,7 +121,12 @@ public class HomeActivity extends AppCompatActivity
         startActivity(new Intent(this, SettingsActivity.class));
         break;
       case R.id.message:
-        startActivity(new Intent(this,NoticeActivity.class));
+        if(hasUserinfo)
+        {
+          startActivity(new Intent(this, MessageListActivity.class));
+        }else {
+          startActivity(new Intent(this, UserInfoActivity.class));
+        }
         break;
       default:
         break;

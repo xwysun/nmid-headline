@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
 import cn.edu.cqupt.nmid.headline.ui.activity.DetailedActivity;
 import cn.jpush.android.api.JPushInterface;
 import com.google.gson.JsonObject;
@@ -37,8 +38,8 @@ public class JPushReceiver extends BroadcastReceiver {
       JsonObject newObj =
           new JsonParser().parse(bundle.getString(JPushInterface.EXTRA_EXTRA)).getAsJsonObject();
 
-      Feed feed = new Feed(newObj.get(HeadlineService.ID).getAsInt(),
-          newObj.get(HeadlineService.CATEGORY).getAsInt());
+      FreshNews feed = new FreshNews(newObj.get(HeadlineService.ID).getAsInt(),
+          newObj.get(HeadlineService.TYPE).getAsString());
       DetailedActivity.startActivity(context, feed);
     } else {
       Log.e(TAG, "cn.jpush.android.EXTRA IllegalFormatException");

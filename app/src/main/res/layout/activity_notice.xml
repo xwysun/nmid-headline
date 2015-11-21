@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:text="长度不超过16个字"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:id="@+id/titleedit"/>
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="正文"
-            android:id="@+id/textView"
+            android:id="@+id/contentedit"
             android:background="#fff"
             />
     </ScrollView>

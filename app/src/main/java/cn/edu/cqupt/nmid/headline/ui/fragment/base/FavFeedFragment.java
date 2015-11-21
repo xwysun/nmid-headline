@@ -2,6 +2,8 @@ package cn.edu.cqupt.nmid.headline.ui.fragment.base;
 
 import android.view.View;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
+
 import com.activeandroid.query.Select;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +15,8 @@ import java.util.List;
 public class FavFeedFragment extends NewsFeedFragment {
 
   @Override void loadNewFeeds() {
-    List<Feed> feeds = new ArrayList<>();
-    feeds = new Select().from(Feed.class)
+    List<FreshNews> feeds = new ArrayList<>();
+    feeds = new Select().from(FreshNews.class)
         //.where("isLike=?", true)
         .orderBy("idMember desc")
         .limit(this.feed_limit)

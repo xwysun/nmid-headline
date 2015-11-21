@@ -23,6 +23,9 @@ import cn.edu.cqupt.nmid.headline.support.pref.HttpPref;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNewList;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshOldList;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.HeadJson;
 import cn.edu.cqupt.nmid.headline.ui.adapter.NewsFeedAdapter;
 import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
@@ -60,20 +63,20 @@ public class NewsFeedFragment extends Fragment {
    * Data
    */
   LinearLayoutManager mLayoutManager;
-  ArrayList<Feed> newsBeans = new ArrayList<>();
+  ArrayList<FreshNews> newsBeans = new ArrayList<>();
   NewsFeedAdapter adapter;
   int feed_id;
   private String title;
   protected int feed_limit = 15;
-  private int feed_category = HeadlineService.CATE_ALUMNUS;
+  private String feed_category = HeadlineService.TYPE_JINGWEI;
   private boolean isFavorite = false;
   private boolean isLoadingMore = false;
 
-  public static NewsFeedFragment newInstance(String title, int type) {
+  public static NewsFeedFragment newInstance(String title, String type) {
     NewsFeedFragment fragment = new NewsFeedFragment();
     Bundle args = new Bundle();
     args.putString(ARG_TITLE, title);
-    args.putInt(ARG_CATEGORY, type);
+    args.putString(ARG_CATEGORY, type);
     fragment.setArguments(args);
     return fragment;
   }
@@ -103,7 +106,7 @@ public class NewsFeedFragment extends Fragment {
   private void getArgsAndPrefs() {
     if (getArguments() != null) {
       title = getArguments().getString(ARG_TITLE);
-      feed_category = getArguments().getInt(ARG_CATEGORY);
+      feed_category = getArguments().getString(ARG_CATEGORY);
       isFavorite = getArguments().getBoolean(ARG_FAV);
     } else {
       Log.e(TAG, "getArguments == null!");
@@ -138,7 +141,6 @@ public class NewsFeedFragment extends Fragment {
     mRecyclerview.setLayoutManager(mLayoutManager);
     mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
       @Override public void onRefresh() {
-
         loadNewFeeds();
       }
     });
@@ -163,10 +165,11 @@ public class NewsFeedFragment extends Fragment {
 
   void loadNewFeeds() {
     mRecyclerview.smoothScrollToPosition(0);
-    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
+    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
         .create(HeadlineService.class)
-        .getFreshFeeds(feed_category, 0, feed_limit).enqueue(new Callback<HeadJson>() {
-      @Override public void onResponse(Response<HeadJson> response) {
+        .getFreshFeeds( -1, -1,feed_category).enqueue(new Callback<FreshNewList>() {
+      @Override public void onResponse(Response<FreshNewList> response) {
+        Log.e(TAG, response.body().toString());
         dispatchSuccess(response.body(), true);
       }
 
@@ -193,47 +196,50 @@ public class NewsFeedFragment extends Fragment {
 
   void loadOldNews() {
     isLoadingMore = true;
-    feed_id = newsBeans.get(newsBeans.size() - 1).getIdmember();
-    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
+    Log.d("newsBeans","size"+newsBeans.size());
+    feed_id = newsBeans.get(newsBeans.size() - 1).getNewsPid();
+    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
         .create(HeadlineService.class)
-        .getOldFeeds(feed_category, feed_id, feed_limit).enqueue(new Callback<HeadJson>() {
-      @Override public void onResponse(Response<HeadJson> response) {
+        .getFreshFeeds(feed_id, feed_limit, feed_category).enqueue(new Callback<FreshNewList>() {
+      @Override public void onResponse(Response<FreshNewList> response) {
         dispatchSuccess(response.body(), false);
+        Log.e("oldnews",response.body().toString());
       }
 
       @Override public void onFailure(Throwable t) {
-
+        t.printStackTrace();
       }
     });
   }
 
-  private void dispatchSuccess(HeadJson headJson, boolean isClear) {
+  private void dispatchSuccess(FreshNewList headJson, boolean isClear) {
 
     if (mSwipeRefreshLayout != null) {
       mSwipeRefreshLayout.setRefreshing(false);
     }
     showErrorView(View.GONE);
 
-    if (headJson.getStatus() == HeadlineService.STATUS_ERR) {
+
+    if (headJson.getCode() == HeadlineService.STATUS_ERR) {
       Log.e(TAG, "STATUS_ERR , use LogLevel.FULL for more!");
       return;
     }
-    if (headJson.getStatus() == HeadlineService.STATUS_OK) {
+    if (headJson.getCode() == HeadlineService.STATUS_OK) {
       if (newsBeans.isEmpty()) {
         Log.d(TAG, "newsBeans.isEmpty()");
-        newsBeans.addAll(headJson.getData());
+        newsBeans.addAll(headJson.getFreshNews());
         adapter.notifyDataSetChanged();
         //cacheToDb(newsBeans);
         return;
       }
-      if (newsBeans.get(0).getIdmember() == headJson.getData().get(0).getIdmember()) {
+      if (newsBeans.get(0).getNewsPid() == headJson.getFreshNews().get(0).getNewsPid()) {
         Log.d(TAG, "Same data, Ignore cacheToDb");
         return;
       }
       if (isClear) {
         newsBeans.clear();
       }
-      newsBeans.addAll(headJson.getData());
+      newsBeans.addAll(headJson.getFreshNews());
       adapter.notifyDataSetChanged();
     }
   }

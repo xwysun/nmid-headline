@@ -50,10 +50,10 @@ public class SlidingTabFragment extends Fragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Log.d(TAG, "onViewCreated");
-    fragments.add(NewsFeedFragment.newInstance("学院风采", HeadlineService.CATE_SCHOOL));
-    fragments.add(NewsFeedFragment.newInstance("青春通信", HeadlineService.CATE_TELECOMMUNICATION));
-    fragments.add(NewsFeedFragment.newInstance("科技创新", HeadlineService.CATE_TECHNOLOGY));
-    fragments.add(NewsFeedFragment.newInstance("通信校友", HeadlineService.CATE_ALUMNUS));
+    fragments.add(NewsFeedFragment.newInstance("学院经纬", HeadlineService.TYPE_JINGWEI));
+    fragments.add(NewsFeedFragment.newInstance("新闻快讯", HeadlineService.TYPE_NEWS));
+//    fragments.add(NewsFeedFragment.newInstance("科技创新", HeadlineService.CATE_TECHNOLOGY));
+//    fragments.add(NewsFeedFragment.newInstance("通信校友", HeadlineService.CATE_ALUMNUS));
     Log.d(TAG, "setViewPager");
     mTabLayout.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(getActivity()));
 

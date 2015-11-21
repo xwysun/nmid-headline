@@ -36,5 +36,8 @@
 
   <!-- PhotoViewBackward-compatible version of ?android:attr/buttonBarButtonStyle -->
   <style name="ButtonBarButton"/>
+  <style name="NotitleDialog" parent="@android:style/Theme.Dialog">
+    <item name="android:windowNoTitle">true</item>
+  </style>
 
 </resources>

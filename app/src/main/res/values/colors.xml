@@ -4,6 +4,8 @@
 
   <color name="drawerbackgroud">@color/switch_thumb_normal_material_dark</color>
   <color name="primarg_bg">#ff4198eb</color>
+  <item name="gray_holo_dark" type="color">#ff464646</item>
+  <item name="gray_holo_light" type="color">#ffd0d0d0</item>
 
 
   <color name="style_color_primary">#2d5d82</color>
