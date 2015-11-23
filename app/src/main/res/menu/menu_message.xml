@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cn.edu.cqupt.nmid.headline.ui.activity.SettingsActivity">
     <item
-        android:id="@+id/message_send"
-        android:title="发布新通知"
+    android:id="@+id/message_send"
+    android:title="信息"
+    android:orderInCategory="100"
+    app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/message_setting"
+        android:title="设置"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
 </menu>

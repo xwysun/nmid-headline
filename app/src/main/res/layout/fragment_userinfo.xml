@@ -143,6 +143,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/accouttext"
+                android:singleLine="true"
                 android:textSize="@dimen/login_textsize"/>
         </LinearLayout>
         <LinearLayout
@@ -161,6 +162,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/login_textsize"
                 android:id="@+id/passwordtext"
+                android:singleLine="true"
                 android:password="true"/>
         </LinearLayout>
     </LinearLayout>

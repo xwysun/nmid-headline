@@ -23,18 +23,18 @@ public class UserInfoActivity extends BaseFragmentActivity {
     public Fragment getFragment() {
         return UserInfoFragment.newInstance(getIntent().getExtras());
     }
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_userinfo, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.user_info:
-                Intent intent =new Intent(getApplicationContext(),MessageListActivity.class);
-                startActivity(intent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_userinfo, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//    @Override public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.user_info:
+//                Intent intent =new Intent(getApplicationContext(),MessageListActivity.class);
+//                startActivity(intent);
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 }

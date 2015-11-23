@@ -1,6 +1,8 @@
 package cn.edu.cqupt.nmid.headline.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,7 +51,10 @@ public class HomeActivity extends AppCompatActivity
 
   NavigationDrawerFragment mNavigationDrawerFragment;
   private String TAG = LogUtils.makeLogTag(HomeActivity.class);
-  private boolean hasUserinfo=false;
+  private String Mode;
+  private String classNo;
+  private String password;
+  private String account;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -60,6 +65,24 @@ public class HomeActivity extends AppCompatActivity
     trySetupNavigationDrawer();
     mToolbar.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(this));
     mToolbarHolder.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(this));
+  }
+  public boolean hasUserInfoCache()
+  {
+    SharedPreferences sharedPreferences=getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+    Mode=sharedPreferences.getString("MODE", "NONE");
+    password=sharedPreferences.getString("password", "NONE");
+    account=sharedPreferences.getString("account","NONE");
+    classNo=sharedPreferences.getString("classNo","NONE");
+    Log.d("share",Mode+account+password+classNo);
+    if (Mode.equals("student")&&!classNo.equals("NONE")&&!classNo.equals("NONE"))
+    {
+      return true;
+    }else if (Mode.equals("teacher")&&!account.equals("NONE")&&!password.equals("NONE"))
+    {
+      return true;
+    }else {
+      return false;
+    }
   }
 
   public void trySetupToolbar() {
@@ -121,7 +144,8 @@ public class HomeActivity extends AppCompatActivity
         startActivity(new Intent(this, SettingsActivity.class));
         break;
       case R.id.message:
-        if(hasUserinfo)
+
+        if(hasUserInfoCache())
         {
           startActivity(new Intent(this, MessageListActivity.class));
         }else {

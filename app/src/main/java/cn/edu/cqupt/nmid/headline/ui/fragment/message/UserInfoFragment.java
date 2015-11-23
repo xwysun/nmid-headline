@@ -79,22 +79,23 @@ public class UserInfoFragment extends Fragment {
     Button confirm;
     private String password;
     private String account;
+    private boolean isLogin;
     private ArrayList<String> gradeList = new ArrayList<String>();
     private ArrayList<Class> classesList=new ArrayList<Class>();
-    private Class classes;
     private ArrayList<String> class0List = new ArrayList<String>();
     private ArrayList<String> class1List = new ArrayList<String>();
     private ArrayList<String> class2List = new ArrayList<String>();
     private ArrayList<String> class3List = new ArrayList<String>();
+    private ArrayList<ArrayList<String>> classLists=new ArrayList<ArrayList<String>>();
     private String confirmGrade;
     private String confirmClass;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Handler classhandler=new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            setSpinnier();
         }
     };
 
@@ -111,7 +112,8 @@ public class UserInfoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         sharedPreferences=getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        initView();
+        getGradeClass();
+       initView();
     }
 
     public static UserInfoFragment newInstance(Bundle bundle) {
@@ -124,25 +126,7 @@ public class UserInfoFragment extends Fragment {
      * to do initView and SET Listener
      */
     public void initView() {
-        getGradeClass();
         changeCardView(MODE);
-        ArrayAdapter<String> gradeAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,
-                gradeList);
-        gradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGrade.setAdapter(gradeAdapter);
-        spinnerGrade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                confirmGrade = gradeList.get(position);
-                Log.d("gradeNo", confirmGrade);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         student.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,28 +144,23 @@ public class UserInfoFragment extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MODE == "student") {
+                if (MODE.equals("student") ) {
                     if (confirmGrade != null && confirmClass != null) {
                         editor.putString("classNo", confirmClass);
+                        editor.putString("MODE",MODE);
+                        editor.commit();
                         Toast.makeText(getActivity(), "设置成功", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getActivity(), MessageListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
                         Toast.makeText(getActivity(), "请先选择班级", Toast.LENGTH_SHORT).show();
                     }
-                } else if (MODE == "teacher") {
-                    account=accouttext.getText().toString().trim();
-                    password=passwordtext.getText().toString().trim();
-                    if (password != null && account != null) {
-                        if (checkAccount(account, password)) {
-                            editor.putString("account", account);
-                            editor.putString("password", password);
-                            Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), MessageListActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(getActivity(), "账号或密码错误", Toast.LENGTH_SHORT).show();
-                        }
+                } else if (MODE.equals("teacher")) {
+                    account = accouttext.getText().toString().trim();
+                    password = passwordtext.getText().toString().trim();
+                    if (!password.isEmpty() && !account.isEmpty()) {
+                        checkAccount(account,password);
                     } else {
                         Toast.makeText(getActivity(), "请输入账号密码", Toast.LENGTH_SHORT).show();
                     }
@@ -189,6 +168,43 @@ public class UserInfoFragment extends Fragment {
             }
         });
 
+    }
+    public void setSpinnier()
+    {
+        ArrayAdapter<String> gradeAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,
+                gradeList);
+        gradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGrade.setAdapter(gradeAdapter);
+        spinnerGrade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                confirmGrade = gradeList.get(position);
+                ArrayList<String> chooseClasses=classLists.get(position);
+                Log.d("chooseclasses","ok"+chooseClasses.toString());
+                ArrayAdapter<String> classAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,
+                       chooseClasses );
+                classAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerClass.setAdapter(classAdapter);
+                spinnerClass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        confirmClass = chooseClasses.get(position);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     /**
@@ -204,12 +220,20 @@ public class UserInfoFragment extends Fragment {
                 //怪得不行的JSON解析
                 gradeList=(ArrayList<String>)response.body().getGrades();
                 classesList=(ArrayList<Class>)response.body().getClasses();
-                classes=classesList.get(0);
-                class0List=(ArrayList<String>)classes.getGrade0();
-                class1List=(ArrayList<String>)classes.getGrade1();
-                class2List=(ArrayList<String>)classes.getGrade2();
-                class3List=(ArrayList<String>)classes.getGrade3();
-                Log.d("class0list0",gradeList.get(0));
+                class0List=(ArrayList<String>)classesList.get(0).getGrade0();
+                class1List=(ArrayList<String>)classesList.get(1).getGrade1();
+                class2List=(ArrayList<String>)classesList.get(2).getGrade2();
+                class3List=(ArrayList<String>)classesList.get(3).getGrade3();
+                Log.d("class1list", "" + class0List.toString());
+                classLists.add(class0List);
+                Log.d("class1list", "" + class1List.toString());
+                classLists.add(class1List);
+                Log.d("class1list", "" + class2List.toString());
+                classLists.add(class2List);
+                Log.d("class1list", "" + class3List.toString());
+                classLists.add(class3List);
+                Log.d("class0list0", gradeList.get(0));
+                classhandler.sendEmptyMessage(0);
             }
 
             @Override
@@ -225,27 +249,40 @@ public class UserInfoFragment extends Fragment {
      * @param password
      * @return
      */
-    public  boolean checkAccount(String account,String password)
+    public void checkAccount(String account,String password)
     {
-        final boolean[] IsChecked = new boolean[1];
         RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                 .create(HeadlineService.class)
                 .CheckAccount(account,password).enqueue(new Callback<IsLogin>() {
             @Override
             public void onResponse(Response<IsLogin> response) {
-                IsChecked[0] =response.body().getLogin();
+                isLogin=response.body().getLogin();
+                Log.d("islogin", String.valueOf(isLogin));
+                if (isLogin) {
+                    editor.putString("account", account);
+                    editor.putString("password", password);
+                    editor.putString("MODE", MODE);
+                    editor.commit();
+                    Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), MessageListActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                } else {
+                    Log.d("toast", String.valueOf(isLogin));
+                    Toast.makeText(getActivity(), "账号或密码错误", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                IsChecked[0]=false;
+                isLogin=false;
+                Toast.makeText(getActivity(), "账号或密码错误", Toast.LENGTH_SHORT).show();
             }
         });
-        return IsChecked[0];
     }
     public void changeCardView(String mode)
     {
-        if (mode == "student") {
+        if (mode.equals("student")) {
             studentCheck.setBackgroundResource(R.drawable.checkbox_checked);
             teacherCheck.setBackgroundResource(R.drawable.checkbox_uncheck);
             studentsetting.setEnabled(true);
@@ -254,7 +291,7 @@ public class UserInfoFragment extends Fragment {
             teachersetting.setEnabled(false);
             accouttext.setEnabled(false);
             passwordtext.setEnabled(false);
-        } else if (mode=="teacher"){
+        } else if (mode.equals("teacher")){
             studentCheck.setBackgroundResource(R.drawable.checkbox_uncheck);
             teacherCheck.setBackgroundResource(R.drawable.checkbox_checked);
             studentsetting.setEnabled(false);

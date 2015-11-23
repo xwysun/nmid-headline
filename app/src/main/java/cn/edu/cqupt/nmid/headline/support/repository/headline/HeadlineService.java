@@ -84,9 +84,12 @@ public interface HeadlineService {
    Call<SendCode> sendMsg(@Field("account") String account, @Field("passwd") String passwd,
                             @Field("title") String title, @Field("content") String content,
                             @Field("startTime") String starTtime,@Field("endTime") String endTime,
-                            @Field("classNumber  ") ArrayList<String> classNumber);
+                            @Field("classNumber") String classNumber);
 
     @FormUrlEncoded
     @POST("/TongxinHeadline/api/user/login")
     Call<IsLogin> CheckAccount(@Field("account") String account, @Field("passwd") String passwd);
+    @FormUrlEncoded
+    @POST("/TongxinHeadline/api/message/browseMessage")
+    Call<MessageGson> receiveTeacherMessage(@Field("offSet") int offSet, @Field("account") String account,@Field("passwd") String passwd);
 }

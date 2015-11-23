@@ -1,6 +1,8 @@
 package cn.edu.cqupt.nmid.headline.ui.fragment.message;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.otto.Subscribe;
@@ -50,6 +53,8 @@ public class MessageFragment extends Fragment {
     private static final String ARG_TITLE = "title";
     private static final String ARG_CATEGORY = "slug";
     private static final String ARG_FAV = "favorite";
+    private int OFFSET=1;
+    //1为5条，2为10条，3为15条
 
     String TAG = makeLogTag(MessageFragment.class);
     /**
@@ -77,6 +82,10 @@ public class MessageFragment extends Fragment {
     protected int msg_limit = 15;
     private int feed_category = HeadlineService.CATE_ALUMNUS;
     private boolean isLoadingMore = false;
+    private String classNo;
+    private String Mode;
+    private String account;
+    private String password;
 
     public static MessageFragment newInstance(String title, int type) {
         MessageFragment fragment = new MessageFragment();
@@ -122,6 +131,12 @@ public class MessageFragment extends Fragment {
     @Override public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                        Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
+        SharedPreferences sharedPreferences=getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        Mode=sharedPreferences.getString("MODE", "NONE");
+        password=sharedPreferences.getString("password", "NONE");
+        account=sharedPreferences.getString("account","NONE");
+        classNo=sharedPreferences.getString("classNo","NONE");
+        Log.d("share",Mode+account+password+classNo);
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
         ButterKnife.inject(this, view);
         return view;
@@ -165,25 +180,45 @@ public class MessageFragment extends Fragment {
                 }
             }
         });
-
         loadDbFeeds();
     }
 
     void loadNewFeeds() {
-        mRecyclerview.smoothScrollToPosition(0);
-        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
-                .create(HeadlineService.class)
-                .receiveMessage(1, "0191301").enqueue(new Callback<MessageGson>() {
-            @Override
-            public void onResponse(Response<MessageGson> response) {
-                dispatchSuccess(response.body(), true);
-            }
+        if (Mode.equals("student")&&!classNo.equals("NONE")) {
+            mRecyclerview.smoothScrollToPosition(0);
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+                    .create(HeadlineService.class)
+                    .receiveMessage(OFFSET, classNo).enqueue(new Callback<MessageGson>() {
+                @Override
+                public void onResponse(Response<MessageGson> response) {
+                    dispatchSuccess(response.body(), true);
+                }
 
-            @Override
-            public void onFailure(Throwable t) {
+                @Override
+                public void onFailure(Throwable t) {
 
-            }
-        });
+                }
+            });
+        }else if (Mode.equals("teacher")&&!account.equals("NONE")&&!password.equals("NONE"))
+        {
+            mRecyclerview.smoothScrollToPosition(0);
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+                    .create(HeadlineService.class)
+                    .receiveTeacherMessage(OFFSET,account,password).enqueue(new Callback<MessageGson>() {
+                @Override
+                public void onResponse(Response<MessageGson> response) {
+                    dispatchSuccess(response.body(), true);
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            });
+            
+        }else {
+            Toast.makeText(getActivity(),"内部错误，请清除缓存后重试",Toast.LENGTH_SHORT);
+        }
     }
 
     //private void cacheToDb(List<Feed> feeds) {
@@ -203,10 +238,10 @@ public class MessageFragment extends Fragment {
 
     void loadOldNews() {
         isLoadingMore = true;
-        msg_id = newsBeans.get(newsBeans.size() - 1).getMessagePid();
+        msg_id = newsBeans.get(newsBeans.size()/5+1).getMessagePid();
         RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                 .create(HeadlineService.class)
-                .receiveMessage(msg_id, "0141301").enqueue(new Callback<MessageGson>() {
+                .receiveMessage(msg_id,classNo).enqueue(new Callback<MessageGson>() {
             @Override
             public void onResponse(Response<MessageGson> response) {
                 dispatchSuccess(response.body(), true);

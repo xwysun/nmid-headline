@@ -1,7 +1,6 @@
 
 package cn.edu.cqupt.nmid.headline.support.repository.headline.bean;
 
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,15 +12,21 @@ public class RecMsg {
     @SerializedName("content")
     @Expose
     private String content;
-    @SerializedName("title")
-    @Expose
-    private String title;
     @SerializedName("start_time")
     @Expose
     private String startTime;
     @SerializedName("end_time")
     @Expose
     private String endTime;
+    @SerializedName("class_number")
+    @Expose
+    private String classNumber;
+    @SerializedName("teacher_pid")
+    @Expose
+    private Integer teacherPid;
+    @SerializedName("title")
+    @Expose
+    private String title;
     @SerializedName("name")
     @Expose
     private String name;
@@ -65,24 +70,6 @@ public class RecMsg {
     /**
      * 
      * @return
-     *     The title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * 
-     * @param title
-     *     The title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * 
-     * @return
      *     The startTime
      */
     public String getStartTime() {
@@ -114,6 +101,60 @@ public class RecMsg {
      */
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    /**
+     * 
+     * @return
+     *     The classNumber
+     */
+    public String getClassNumber() {
+        return classNumber;
+    }
+
+    /**
+     * 
+     * @param classNumber
+     *     The class_number
+     */
+    public void setClassNumber(String classNumber) {
+        this.classNumber = classNumber;
+    }
+
+    /**
+     * 
+     * @return
+     *     The teacherPid
+     */
+    public Integer getTeacherPid() {
+        return teacherPid;
+    }
+
+    /**
+     * 
+     * @param teacherPid
+     *     The teacher_pid
+     */
+    public void setTeacherPid(Integer teacherPid) {
+        this.teacherPid = teacherPid;
+    }
+
+    /**
+     * 
+     * @return
+     *     The title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * 
+     * @param title
+     *     The title
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**

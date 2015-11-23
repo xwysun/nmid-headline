@@ -67,6 +67,8 @@ dependencies {
   compile 'io.reactivex:rxandroid:1.0.1'
   compile files('libs/tbs.jar')
   compile files('libs/Bughd_android_sdk_v1.3.4.jar')
+  //  compile 'com.jakewharton:butterknife:7.0.1'
+  compile 'com.google.code.gson:gson:2.4'
 }
 
 
