@@ -11,6 +11,7 @@ import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.HeadJson;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.IsLogin;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.MessageGson;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.SendCode;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.TeacherList;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -38,7 +39,7 @@ public interface HeadlineService {
 //  int CATE_SCHOOL = 1;
 //  int CATE_TECHNOLOGY = 2;
 //  int CATE_TELECOMMUNICATION = 3;
-  int CATE_ALUMNUS = 4;
+  int CATE_ALUMNUS = 2;
 
   int STATUS_OK = 200;
   int STATUS_ERR = 500;
@@ -47,6 +48,7 @@ public interface HeadlineService {
   String TYPE="type";
   String TYPE_JINGWEI="a";
   String TYPE_NEWS="b";
+    String TYPE_TEACHER=null;
 
   //关键字	类型	含义	说明
   //自然数	int	设置刷新新闻起始id
@@ -61,6 +63,8 @@ public interface HeadlineService {
 
   @GET("/TongxinHeadline/api/news/fresh") Call<FreshNewList> getFreshFeeds(
       @Query(ID) int id, @Query(LIMIT) int limit,@Query(TYPE) String type);
+    @GET("/TongxinHeadline/api/teacherInfo/getInfo") Call<TeacherList> getTeacherinfo(
+             @Query(LIMIT) int limit);
 //
 //  @GET("/api/news/freshOldNews") Call<FreshOldList> getOldFeeds(
 //          @Query(ID) int id, @Query(LIMIT) int limit,@Query(TYPE) String type);

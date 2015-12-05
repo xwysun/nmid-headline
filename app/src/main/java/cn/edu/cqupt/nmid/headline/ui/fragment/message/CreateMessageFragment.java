@@ -312,6 +312,8 @@ public class CreateMessageFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 gradeChoose = gradeList.get(position);
                 chooseClasses = classLists.get(position);
+                classChoose.clear();
+                classNo.setText("共0个班");
                 mDialog=setDialog();
                 classNo.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -366,4 +368,5 @@ public class CreateMessageFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
+
 }

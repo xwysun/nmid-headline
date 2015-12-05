@@ -152,7 +152,7 @@ public class NewsFeedFragment extends Fragment {
         int totalItemCount = mLayoutManager.getItemCount();
         //lastVisibleItem >= totalItemCount 表示剩下2个item自动加载
         // dy>0 表示向下滑动
-        if (lastVisibleItem >= totalItemCount - 1 && dy > 0) {
+        if (lastVisibleItem >= totalItemCount - 1&& dy > 0) {
           if (!isLoadingMore) {
             loadOldNews();
           }
@@ -195,7 +195,7 @@ public class NewsFeedFragment extends Fragment {
   //}
 
   void loadOldNews() {
-    isLoadingMore = true;
+//    isLoadingMore = true;
     Log.d("newsBeans","size"+newsBeans.size());
     feed_id = newsBeans.get(newsBeans.size() - 1).getNewsPid();
     RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
@@ -232,7 +232,7 @@ public class NewsFeedFragment extends Fragment {
         //cacheToDb(newsBeans);
         return;
       }
-      if (newsBeans.get(0).getNewsPid() == headJson.getFreshNews().get(0).getNewsPid()) {
+      if (newsBeans.get(0).getNewsPid().equals(headJson.getFreshNews().get(0).getNewsPid())) {
         Log.d(TAG, "Same data, Ignore cacheToDb");
         return;
       }

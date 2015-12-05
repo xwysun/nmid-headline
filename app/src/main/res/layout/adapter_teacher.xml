@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:test="http://schemas.android.com/tools"
+    class="android.support.v7.widget.CardView"
+    android:padding="0dp"
+    android:layout_width="wrap_content"
+    android:layout_marginTop="15dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/item_card_holder"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="@dimen/cardview_default_radius"
+    android:theme="@style/CardView.Light">
+
+    <LinearLayout
+        android:layout_width="90dp"
+        android:padding="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="130dp"
+            android:id="@+id/teacherIcon" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/teacherName"/>
+    </LinearLayout>
+
+
+</view>

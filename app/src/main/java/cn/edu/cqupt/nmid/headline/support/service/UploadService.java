@@ -103,8 +103,8 @@ public class UploadService extends Service {
   }
 
   Observable<UploadResult> resultObservable(Uri uri, String nickname, String avatar) {
-    return RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
+    return RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
         .create(ImageService.class)
-        .getupdateImage( new File(uri.getPath()),nickname, Build.MODEL, avatar);
+        .getupdateImage( new File(uri.getPath()),nickname, Build.MODEL);
   }
 }

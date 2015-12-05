@@ -32,11 +32,12 @@ public interface ImageService {
       @Part(DEVICE_INFO) String deviceinfo,
       @Part(AVATAR) String avatar, Callback<UploadResult> callback);
 
-  @Multipart @POST("/api/android/upload") Observable<UploadResult> getupdateImage(
-      @Part(IMAGE) File photo,
-      @Part(NICKNAME) String description,
-      @Part(DEVICE_INFO) String deviceinfo,
-      @Part(AVATAR) String avatar);
+  @Multipart @POST("/TongxinHeadline/api/image/upload") Observable<UploadResult> getupdateImage(
+      @Part("file") File photo,
+      @Part("nickName") String description,
+      @Part("deviceinfo") String deviceinfo
+//      @Part(AVATAR) String avatar
+  );
 
   //get image list
   @GET("/api/android/freshimage") Call<ImageStream> getRefreshImage(@Query("id") int id, @Query(LIMIT) int limit);

@@ -19,7 +19,9 @@ import cn.edu.cqupt.nmid.headline.support.GlobalContext;
 import cn.edu.cqupt.nmid.headline.support.event.NightModeEvent;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.TeacherList;
 import cn.edu.cqupt.nmid.headline.ui.fragment.base.NewsFeedFragment;
+import cn.edu.cqupt.nmid.headline.ui.fragment.base.TeacherListFragment;
 import cn.edu.cqupt.nmid.headline.utils.LogUtils;
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
@@ -37,7 +39,7 @@ public class SlidingTabFragment extends Fragment {
   @InjectView(R.id.viewpager) ViewPager mViewPager;
   @InjectView(R.id.holder) LinearLayout mHolder;
 
-  ArrayList<NewsFeedFragment> fragments = new ArrayList<>();
+  ArrayList<Fragment> fragments = new ArrayList<>();
   PagerAdapter mPagerAdapter;
 
   @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -52,7 +54,7 @@ public class SlidingTabFragment extends Fragment {
     Log.d(TAG, "onViewCreated");
     fragments.add(NewsFeedFragment.newInstance("学院经纬", HeadlineService.TYPE_JINGWEI));
     fragments.add(NewsFeedFragment.newInstance("新闻快讯", HeadlineService.TYPE_NEWS));
-//    fragments.add(NewsFeedFragment.newInstance("科技创新", HeadlineService.CATE_TECHNOLOGY));
+    fragments.add(TeacherListFragment.newInstance("教师名录"));
 //    fragments.add(NewsFeedFragment.newInstance("通信校友", HeadlineService.CATE_ALUMNUS));
     Log.d(TAG, "setViewPager");
     mTabLayout.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(getActivity()));
@@ -88,9 +90,9 @@ public class SlidingTabFragment extends Fragment {
 
     private String TAG = LogUtils.makeLogTag(PagerAdapter.class);
 
-    private ArrayList<NewsFeedFragment> fragments;
+    private ArrayList<Fragment> fragments;
 
-    public PagerAdapter(FragmentManager fm, ArrayList<NewsFeedFragment> fragments) {
+    public PagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
       super(fm);
       this.fragments = fragments;
     }

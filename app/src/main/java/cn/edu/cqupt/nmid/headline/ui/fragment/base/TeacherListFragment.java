@@ -1,12 +1,11 @@
-package cn.edu.cqupt.nmid.headline.ui.fragment.message;
+package cn.edu.cqupt.nmid.headline.ui.fragment.base;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.otto.Subscribe;
@@ -31,12 +29,12 @@ import cn.edu.cqupt.nmid.headline.support.event.NightModeEvent;
 import cn.edu.cqupt.nmid.headline.support.pref.HttpPref;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
-import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
-import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.HeadJson;
-import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.MessageGson;
-import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.RecMsg;
-import cn.edu.cqupt.nmid.headline.ui.adapter.MessageAdapter;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNewList;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.GetInfo;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.TeacherList;
 import cn.edu.cqupt.nmid.headline.ui.adapter.NewsFeedAdapter;
+import cn.edu.cqupt.nmid.headline.ui.adapter.TeacherAdapter;
 import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
 import retrofit.Callback;
 import retrofit.Response;
@@ -45,19 +43,18 @@ import static cn.edu.cqupt.nmid.headline.utils.LogUtils.LOGD;
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.makeLogTag;
 
 /**
- * Created by xwysun on 2015/11/10.
+ * Created by xwysun on 2015/12/4.
  */
-public class MessageFragment extends Fragment {
+public class TeacherListFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_TITLE = "title";
     private static final String ARG_CATEGORY = "slug";
     private static final String ARG_FAV = "favorite";
-    private int OFFSET=1;
-    int oldfeed_id;
-    //1为5条，2为10条，3为15条
+    private static final int LineItems=3;
+    private int oldfeed_id;
 
-    String TAG = makeLogTag(MessageFragment.class);
+    String TAG = makeLogTag(NewsFeedFragment.class);
     /**
      * Injected Vies
      */
@@ -75,32 +72,25 @@ public class MessageFragment extends Fragment {
     /**
      * Data
      */
-    LinearLayoutManager mLayoutManager;
-    ArrayList<RecMsg> newsBeans = new ArrayList<>();
-    MessageAdapter adapter;
-    int msg_id;
+    GridLayoutManager mLayoutManager;
+    ArrayList<GetInfo> newsBeans = new ArrayList<>();
+    TeacherAdapter adapter;
+    int feed_id;
     private String title;
-    protected int msg_limit = 15;
-    private int feed_category = HeadlineService.CATE_ALUMNUS;
+    protected int feed_limit = 15;
+    private boolean isFavorite = false;
     private boolean isLoadingMore = false;
-    private String classNo;
-    private String Mode;
-    private String account;
-    private String password;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
 
-    public static MessageFragment newInstance(String title, int type) {
-        MessageFragment fragment = new MessageFragment();
+    public static TeacherListFragment newInstance(String title) {
+        TeacherListFragment fragment = new TeacherListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        args.putInt(ARG_CATEGORY, type);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static MessageFragment newFavInstance() {
-        MessageFragment fragment = new MessageFragment();
+    public static TeacherListFragment newFavInstance() {
+        TeacherListFragment fragment = new TeacherListFragment();
         Bundle args = new Bundle();
         args.putBoolean(ARG_FAV, true);
         fragment.setArguments(args);
@@ -124,23 +114,16 @@ public class MessageFragment extends Fragment {
     private void getArgsAndPrefs() {
         if (getArguments() != null) {
             title = getArguments().getString(ARG_TITLE);
-            feed_category = getArguments().getInt(ARG_CATEGORY);
+            isFavorite = getArguments().getBoolean(ARG_FAV);
         } else {
             Log.e(TAG, "getArguments == null!");
         }
-        msg_limit = HttpPref.getQueryFeedsLimit(getActivity());
+        feed_limit = HttpPref.getQueryFeedsLimit(getActivity());
     }
 
     @Override public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                        Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        sharedPreferences=getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        editor=sharedPreferences.edit();
-        Mode=sharedPreferences.getString("MODE", "NONE");
-        password=sharedPreferences.getString("password", "NONE");
-        account=sharedPreferences.getString("account","NONE");
-        classNo=sharedPreferences.getString("classNo","NONE");
-        Log.d("share",Mode+account+password+classNo);
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
         ButterKnife.inject(this, view);
         return view;
@@ -158,14 +141,13 @@ public class MessageFragment extends Fragment {
         mFloatingActionButton.setIcon(R.drawable.ic_reload_48dp);
 
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.RED, Color.YELLOW, Color.GREEN);
-        adapter = new MessageAdapter(newsBeans);
+        adapter = new TeacherAdapter(newsBeans);
         mRecyclerview.setAdapter(adapter);
         mRecyclerview.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new GridLayoutManager(getActivity(),LineItems);
         mRecyclerview.setLayoutManager(mLayoutManager);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override public void onRefresh() {
-
                 loadNewFeeds();
             }
         });
@@ -177,57 +159,31 @@ public class MessageFragment extends Fragment {
                 int totalItemCount = mLayoutManager.getItemCount();
                 //lastVisibleItem >= totalItemCount 表示剩下2个item自动加载
                 // dy>0 表示向下滑动
-                if (lastVisibleItem >= totalItemCount - 1 && dy > 0) {
+                if (lastVisibleItem >= totalItemCount - 2 && dy > 0) {
                     if (!isLoadingMore) {
                         loadOldNews();
                     }
                 }
             }
         });
+
         loadDbFeeds();
     }
 
     void loadNewFeeds() {
-        if (Mode.equals("student")&&!classNo.equals("NONE")) {
-            mRecyclerview.smoothScrollToPosition(0);
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
-                    .create(HeadlineService.class)
-                    .receiveMessage(OFFSET, classNo).enqueue(new Callback<MessageGson>() {
-                @Override
-                public void onResponse(Response<MessageGson> response) {
-                    dispatchSuccess(response.body(), true);
-                    if (response.body()!=null)
-                    {
-                        editor.putString("LASTMSG",response.body().getRecMsg().get(0).getStartTime());
-                    }
-                }
+        mRecyclerview.smoothScrollToPosition(0);
+        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+                .create(HeadlineService.class)
+                .getTeacherinfo(1).enqueue(new Callback<TeacherList>() {
+            @Override public void onResponse(Response<TeacherList> response) {
+                Log.e(TAG, response.body().toString());
+                dispatchSuccess(response.body(), true);
+            }
 
-                @Override
-                public void onFailure(Throwable t) {
+            @Override public void onFailure(Throwable t) {
 
-                }
-            });
-        }else if (Mode.equals("teacher")&&!account.equals("NONE")&&!password.equals("NONE"))
-        {
-            mRecyclerview.smoothScrollToPosition(0);
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
-                    .create(HeadlineService.class)
-                    .receiveTeacherMessage(OFFSET,account,password).enqueue(new Callback<MessageGson>() {
-                @Override
-                public void onResponse(Response<MessageGson> response) {
-                    dispatchSuccess(response.body(), true);
-
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-
-                }
-            });
-            
-        }else {
-            Toast.makeText(getActivity(),"内部错误，请清除缓存后重试",Toast.LENGTH_SHORT);
-        }
+            }
+        });
     }
 
     //private void cacheToDb(List<Feed> feeds) {
@@ -247,73 +203,57 @@ public class MessageFragment extends Fragment {
 
     void loadOldNews() {
         isLoadingMore = true;
-        msg_id = newsBeans.get(newsBeans.size()-1).getMessagePid()/5+1;
-        oldfeed_id=msg_id;
-        if (Mode.equals("student")&&!classNo.equals("NONE")) {
+        Log.d("newsBeans","size"+newsBeans.size());
+        feed_id = newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid()/15+1;
+        oldfeed_id=feed_id;
+        Log.e("feedid", newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid() + "----" + feed_id + "----" + oldfeed_id);
+
             RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                     .create(HeadlineService.class)
-                    .receiveMessage(msg_id, classNo).enqueue(new Callback<MessageGson>() {
-                @Override
-                public void onResponse(Response<MessageGson> response) {
+                    .getTeacherinfo(feed_id).enqueue(new Callback<TeacherList>() {
+                @Override public void onResponse(Response<TeacherList> response) {
+                    Log.e(TAG, response.body().toString());
                     dispatchSuccess(response.body(), false);
                 }
 
-                @Override
-                public void onFailure(Throwable t) {
-
-                }
-            });
-        }else if (Mode.equals("teacher")&&!account.equals("NONE")&&!password.equals("NONE"))
-        {
-            mRecyclerview.smoothScrollToPosition(0);
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
-                    .create(HeadlineService.class)
-                    .receiveTeacherMessage(msg_id,account,password).enqueue(new Callback<MessageGson>() {
-                @Override
-                public void onResponse(Response<MessageGson> response) {
-                    dispatchSuccess(response.body(), false);
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
+                @Override public void onFailure(Throwable t) {
 
                 }
             });
 
-        }else {
-            Toast.makeText(getActivity(),"内部错误，请清除缓存后重试",Toast.LENGTH_SHORT);
-        }
+
     }
 
-    private void dispatchSuccess(MessageGson headJson, boolean isClear) {
+    private void dispatchSuccess(TeacherList headJson, boolean isClear) {
 
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
         showErrorView(View.GONE);
 
-        if (headJson.getCode() == 500) {
+
+        if (headJson.getCode() == HeadlineService.STATUS_ERR) {
             Log.e(TAG, "STATUS_ERR , use LogLevel.FULL for more!");
             return;
         }
-        if (headJson.getCode() == 200) {
+        if (headJson.getCode() == HeadlineService.STATUS_OK) {
             if (newsBeans.isEmpty()) {
                 Log.d(TAG, "newsBeans.isEmpty()");
-                newsBeans.addAll(headJson.getRecMsg());
+                newsBeans.addAll(headJson.getGetInfo());
                 adapter.notifyDataSetChanged();
                 //cacheToDb(newsBeans);
                 return;
             }
-//            if (newsBeans.get(0).getMessagePid() == headJson.getRecMsg().get(0).getMessagePid()) {
-//                Log.d(TAG, "Same data, Ignore cacheToDb");
-//                return;
-//            }
+            if (newsBeans.get(0).getTeacherInfoPid() == headJson.getGetInfo().get(0).getTeacherInfoPid()) {
+                Log.d(TAG, "Same data, Ignore cacheToDb");
+                return;
+            }
             if (isClear) {
                 newsBeans.clear();
             }
-            newsBeans.addAll(headJson.getRecMsg());
+            newsBeans.addAll(headJson.getGetInfo());
             adapter.notifyDataSetChanged();
-            if (newsBeans.get(newsBeans.size()-1).getMessagePid()/5+1==oldfeed_id){
+            if (newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid()/15+1==oldfeed_id){
                 isLoadingMore = true;
             }else {
                 isLoadingMore = false;

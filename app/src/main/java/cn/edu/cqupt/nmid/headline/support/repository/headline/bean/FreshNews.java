@@ -4,11 +4,14 @@ package cn.edu.cqupt.nmid.headline.support.repository.headline.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.activeandroid.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FreshNews extends Model implements Parcelable {
+public class FreshNews extends Model implements Parcelable{
 
     @SerializedName("news_pid")
     @Expose
@@ -25,30 +28,9 @@ public class FreshNews extends Model implements Parcelable {
     @SerializedName("type")
     @Expose
     private String type;
-
-
-    protected FreshNews(Parcel in) {
-        newsPid=in.readInt();
-        title = in.readString();
-        time = in.readString();
-        author = in.readString();
-        type=in.readString();
-    }
-    public FreshNews(int idmember, String category) {
-        this.newsPid = idmember;
-        this.type = category;
-    }
-    public static final Creator<FreshNews> CREATOR = new Parcelable.Creator<FreshNews>() {
-        @Override
-        public FreshNews createFromParcel(Parcel in) {
-            return new FreshNews(in);
-        }
-
-        @Override
-        public FreshNews[] newArray(int size) {
-            return new FreshNews[size];
-        }
-    };
+    @SerializedName("image")
+    @Expose
+    private List<Image> image = new ArrayList<Image>();
 
     /**
      * 
@@ -123,34 +105,79 @@ public class FreshNews extends Model implements Parcelable {
     }
 
     /**
-     *
+     * 
      * @return
-     * The type
+     *     The type
      */
     public String getType() {
         return type;
     }
 
     /**
-     *
+     * 
      * @param type
-     * The type
+     *     The type
      */
     public void setType(String type) {
         this.type = type;
     }
 
-    @Override public int describeContents() {
+    /**
+     * 
+     * @return
+     *     The image
+     */
+    public List<Image> getImage() {
+        return image;
+    }
+
+    /**
+     * 
+     * @param image
+     *     The image
+     */
+    public void setImage(List<Image> image) {
+        this.image = image;
+    }
+
+
+    public FreshNews(int idmember, String category) {
+        this.newsPid = idmember;
+        this.type = category;
+    }
+
+
+    @Override
+    public int describeContents() {
         return 0;
     }
 
-    @Override public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.newsPid);
-        dest.writeString(this.author);
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.newsPid);
         dest.writeString(this.title);
         dest.writeString(this.time);
+        dest.writeString(this.author);
         dest.writeString(this.type);
+        dest.writeTypedList(image);
     }
 
+    private FreshNews(Parcel in) {
+        this.newsPid = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.title = in.readString();
+        this.time = in.readString();
+        this.author = in.readString();
+        this.type = in.readString();
+        in.readTypedList(image, Image.CREATOR);
+    }
 
+    public static final Creator<FreshNews> CREATOR = new Creator<FreshNews>() {
+        public FreshNews createFromParcel(Parcel source) {
+            return new FreshNews(source);
+        }
+
+        public FreshNews[] newArray(int size) {
+            return new FreshNews[size];
+        }
+    };
 }

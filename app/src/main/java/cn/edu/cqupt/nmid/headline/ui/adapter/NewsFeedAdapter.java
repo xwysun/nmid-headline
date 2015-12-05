@@ -17,11 +17,13 @@ import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.HeadJson;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Image;
 import cn.edu.cqupt.nmid.headline.ui.activity.DetailedActivity;
 import cn.edu.cqupt.nmid.headline.ui.fragment.WebViewFragment;
 import cn.edu.cqupt.nmid.headline.utils.LogUtils;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by leon on 1/19/15.
@@ -53,6 +55,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.Conten
   @Override public void onBindViewHolder(ContentViewHolder holder, int position) {
 
     final FreshNews newsBean = mNewsBeans.get(position);
+    final List<Image>images=newsBean.getImage();
     Log.d("mnewbeans",mNewsBeans.get(position).getNewsPid().toString());
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -61,6 +64,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.Conten
         Intent intent = new Intent(v.getContext(), DetailedActivity.class);
         Log.e("newsBean", newsBean.getNewsPid().toString());
         intent.putExtra(WebViewFragment.PARCELABLE_KEY, newsBean);
+        intent.putExtra("mode", WebViewFragment.MODE_NEWS);
         v.getContext().startActivity(intent);
       }
     });
@@ -70,38 +74,41 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.Conten
 //    holder.excerpt.setText(newsBean.get().trim());
 
     //what the fuck api!
-    boolean one = false;
-    boolean two = false;
-    boolean three = false;
+    //what the fuck oldCode;
 
-    if (!one && !two && !three) {
+    if (images.isEmpty()) {
       holder.threeBottonImages.setVisibility(View.GONE);
       holder.iv_single.setVisibility(View.GONE);
       return;
     }
-//
-//    if (one && !two && !three) {
-//      holder.iv_single.setVisibility(View.VISIBLE);
-//      holder.threeBottonImages.setVisibility(View.GONE);
-//      Picasso.with(holder.iv_single.getContext()).load(newsBean.getImage1()).into(holder.iv_single);
-//      return;
-//    }
-//
-//    if (one && two) {
-//      holder.threeBottonImages.setVisibility(View.VISIBLE);
-//      holder.iv_single.setVisibility(View.GONE);
-//      Picasso.with(holder.iv_all_1.getContext()).load(newsBean.getImage1()).into(holder.iv_all_1);
-//      Picasso.with(holder.iv_all_2.getContext()).load(newsBean.getImage2()).into(holder.iv_all_2);
-//
-//      if (three) {
-//        //111
-//        Picasso.with(holder.iv_all_3.getContext()).load(newsBean.getImage3()).into(holder.iv_all_3);
-//      } else {
-//        //110
-//        holder.iv_all_3.setVisibility(View.GONE);
-//      }
-//      return;
-//    }
+
+    if (images.size()==1) {
+      holder.iv_single.setVisibility(View.GONE);
+      holder.threeBottonImages.setVisibility(View.VISIBLE);
+//      Picasso.with(holder.iv_single.getContext()).load(images.get(0).getUrl()).into(holder.iv_single);
+      Picasso.with(holder.iv_all_1.getContext()).load(images.get(0).getUrl()).into(holder.iv_all_1);
+      Log.d(TAG,images.get(0).getUrl());
+      return;
+    }
+
+    if (images.size()>=2) {
+      holder.threeBottonImages.setVisibility(View.VISIBLE);
+      holder.iv_single.setVisibility(View.GONE);
+      Picasso.with(holder.iv_all_1.getContext()).load(images.get(0).getUrl()).into(holder.iv_all_1);
+      Picasso.with(holder.iv_all_2.getContext()).load(images.get(1).getUrl()).into(holder.iv_all_2);
+      Log.d(TAG, images.get(0).getUrl());
+      Log.d(TAG,images.get(1).getUrl());
+
+      if (images.size()==3) {
+        //111
+        Picasso.with(holder.iv_all_3.getContext()).load(images.get(2).getUrl()).into(holder.iv_all_3);
+        Log.d(TAG, images.get(2).getUrl());
+      } else {
+        //110
+        holder.iv_all_3.setVisibility(View.GONE);
+      }
+      return;
+    }
   }
 
   @Override public int getItemCount() {

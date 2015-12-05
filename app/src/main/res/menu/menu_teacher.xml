@@ -3,15 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cn.edu.cqupt.nmid.headline.ui.activity.SettingsActivity">
     <item
-        android:id="@+id/message_send"
+        android:id="@+id/openBrower"
         android:icon="@drawable/newmessage"
-        android:title="新信息"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/message_setting"
-        android:icon="@drawable/setting"
-        android:title="设置"
+        android:title="外部浏览器打开"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
 </menu>

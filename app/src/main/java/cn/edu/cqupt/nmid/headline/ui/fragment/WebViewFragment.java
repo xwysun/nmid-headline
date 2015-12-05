@@ -19,6 +19,7 @@ import cn.edu.cqupt.nmid.headline.support.pref.WebViewPref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Feed;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.FreshNews;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.GetInfo;
 import cn.edu.cqupt.nmid.headline.ui.activity.SettingsActivity;
 import cn.edu.cqupt.nmid.headline.utils.LogUtils;
 import cn.edu.cqupt.nmid.headline.utils.NetworkUtils;
@@ -38,6 +39,8 @@ public class WebViewFragment extends Fragment {
   static final String MIME_TYPE = "text/html";
   static final String ENCODING = "utf-8";
   public static final String PARCELABLE_KEY = "key";
+  public static final String MODE_TEACHER="teacher";
+  public static final String MODE_NEWS="news";
   String url;
 
   @InjectView(R.id.detailed_webview) WebView mWebView;
@@ -49,6 +52,7 @@ public class WebViewFragment extends Fragment {
    * Intent extra uesd for ShareSDK
    */
   private FreshNews feed;
+  private GetInfo teacherInfo;
 
   public WebViewFragment() {
   }
@@ -111,18 +115,30 @@ public class WebViewFragment extends Fragment {
 //  }
 
   private void tryGetIntent() {
-    feed = getArguments().getParcelable(PARCELABLE_KEY);
+    if (getArguments().getString("mode").equals(WebViewFragment.MODE_TEACHER)) {
+      teacherInfo=getArguments().getParcelable(PARCELABLE_KEY);
+    }else
+    {
+      feed = getArguments().getParcelable(PARCELABLE_KEY);
+    }
   }
 
   private void trySetupWebview() {
 
     //http://202.202.43.205:8086/api/android/newscontent?category=1&id=194
-    url = HeadlineService.END_POINT_TEST
-        + "/TongxinHeadline/api/news/content?id="
-        + feed.getNewsPid()
-        + "&type="
-        + feed.getType();
-    Log.e("URL",url);
+
+    if (getArguments().getString("mode").equals(WebViewFragment.MODE_TEACHER)) {
+      url = HeadlineService.END_POINT_TEST
+              + "/TongxinHeadline/api/teacherInfo/getResume?id="
+              + teacherInfo.getTeacherInfoPid();
+    }else
+    {
+      url = HeadlineService.END_POINT_TEST
+              + "/TongxinHeadline/api/news/content?id="
+              + feed.getNewsPid()
+              + "&type="
+              + feed.getType();
+    }
 
     WebSettings settings = mWebView.getSettings();
     mWebView.setWebContentsDebuggingEnabled(true);
@@ -180,13 +196,20 @@ public class WebViewFragment extends Fragment {
     OnekeyShare oks = new OnekeyShare();
     //关闭sso授权
     oks.disableSSOWhenAuthorize();
-
+    if (getArguments().getString("mode").equals(WebViewFragment.MODE_TEACHER)) {
+      oks.setTitle(teacherInfo.getName());
+      // text是分享文本，所有平台都需要这个字段
+      oks.setText(teacherInfo.getResume());
+    }else
+    {
+      // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
+      oks.setTitle(feed.getTitle());
+      // text是分享文本，所有平台都需要这个字段
+      oks.setText(feed.getTitle());
+    }
     // 分享时Notification的图标和文字
     //oks.set(R.drawable.ic_launcher_headline, getString(R.string.app_name));
-    // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
-    oks.setTitle(feed.getTitle());
-    // text是分享文本，所有平台都需要这个字段
-    oks.setText(feed.getTitle());
+
     // comment是我对这条分享的评论，仅在人人网和QQ空间使用
     oks.setComment("我在通信头条分享了文章");
     // site是分享此内容的网站名称，仅在QQ空间使用

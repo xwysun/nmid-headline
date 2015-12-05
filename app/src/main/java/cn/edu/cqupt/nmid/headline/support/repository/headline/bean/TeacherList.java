@@ -1,17 +1,19 @@
 
-package cn.edu.cqupt.nmid.headline.support.repository.image.bean;
+package cn.edu.cqupt.nmid.headline.support.repository.headline.bean;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UploadResult {
+public class TeacherList {
 
     @SerializedName("code")
     @Expose
     private Integer code;
-    @SerializedName("upload")
+    @SerializedName("getInfo")
     @Expose
-    private Upload upload;
+    private List<GetInfo> getInfo = new ArrayList<GetInfo>();
 
     /**
      * 
@@ -34,19 +36,19 @@ public class UploadResult {
     /**
      * 
      * @return
-     *     The upload
+     *     The getInfo
      */
-    public Upload getUpload() {
-        return upload;
+    public List<GetInfo> getGetInfo() {
+        return getInfo;
     }
 
     /**
      * 
-     * @param upload
-     *     The upload
+     * @param getInfo
+     *     The getInfo
      */
-    public void setUpload(Upload upload) {
-        this.upload = upload;
+    public void setGetInfo(List<GetInfo> getInfo) {
+        this.getInfo = getInfo;
     }
 
 }
