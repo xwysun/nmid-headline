@@ -67,10 +67,11 @@ public class NewsFeedFragment extends Fragment {
   NewsFeedAdapter adapter;
   int feed_id;
   private String title;
-  protected int feed_limit = 15;
+  protected int feed_limit = HeadlineService.DEFAULT_LIMIT;
   private String feed_category = HeadlineService.TYPE_JINGWEI;
   private boolean isFavorite = false;
   private boolean isLoadingMore = false;
+  private int oldfeed_id;
 
   public static NewsFeedFragment newInstance(String title, String type) {
     NewsFeedFragment fragment = new NewsFeedFragment();
@@ -167,7 +168,7 @@ public class NewsFeedFragment extends Fragment {
     mRecyclerview.smoothScrollToPosition(0);
     RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
         .create(HeadlineService.class)
-        .getFreshFeeds( -1, -1,feed_category).enqueue(new Callback<FreshNewList>() {
+        .getFreshFeeds( HeadlineService.FIRST_REQUEST, HeadlineService.DEFAULT_LIMIT,feed_category).enqueue(new Callback<FreshNewList>() {
       @Override public void onResponse(Response<FreshNewList> response) {
         Log.e(TAG, response.body().toString());
         dispatchSuccess(response.body(), true);
@@ -195,9 +196,10 @@ public class NewsFeedFragment extends Fragment {
   //}
 
   void loadOldNews() {
-//    isLoadingMore = true;
+    isLoadingMore = true;
     Log.d("newsBeans","size"+newsBeans.size());
     feed_id = newsBeans.get(newsBeans.size() - 1).getNewsPid();
+    oldfeed_id=feed_id;
     RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
         .create(HeadlineService.class)
         .getFreshFeeds(feed_id, feed_limit, feed_category).enqueue(new Callback<FreshNewList>() {
@@ -241,6 +243,11 @@ public class NewsFeedFragment extends Fragment {
       }
       newsBeans.addAll(headJson.getFreshNews());
       adapter.notifyDataSetChanged();
+      if (newsBeans.get(newsBeans.size() - 1).getNewsPid()==oldfeed_id){
+        isLoadingMore = true;
+      }else {
+        isLoadingMore = false;
+      }
     }
   }
 

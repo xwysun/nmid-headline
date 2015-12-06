@@ -1,5 +1,6 @@
 package cn.edu.cqupt.nmid.headline.ui.fragment;
 
+import android.app.AlarmManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -139,7 +140,6 @@ public class WebViewFragment extends Fragment {
               + "&type="
               + feed.getType();
     }
-
     WebSettings settings = mWebView.getSettings();
     mWebView.setWebContentsDebuggingEnabled(true);
     settings.setTextZoom(WebViewPref.getWebViewTextZoom(getActivity()));

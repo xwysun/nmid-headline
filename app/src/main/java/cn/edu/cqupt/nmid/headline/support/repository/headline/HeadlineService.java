@@ -30,6 +30,9 @@ public interface HeadlineService {
 
   String END_POINT = "http://115.29.139.53:8080";
     String END_POINT_TEST="http://121.42.207.100:8080";
+    int FIRST_REQUEST=-1;
+    int DEFAULT_LIMIT=15;
+    int DEFAULT_OFFSET=1;
 
   //1	int	学院新闻
   //2	int	科研动态
@@ -64,7 +67,7 @@ public interface HeadlineService {
   @GET("/TongxinHeadline/api/news/fresh") Call<FreshNewList> getFreshFeeds(
       @Query(ID) int id, @Query(LIMIT) int limit,@Query(TYPE) String type);
     @GET("/TongxinHeadline/api/teacherInfo/getInfo") Call<TeacherList> getTeacherinfo(
-             @Query(LIMIT) int limit);
+            @Query(ID) int id,@Query(LIMIT) int limit);
 //
 //  @GET("/api/news/freshOldNews") Call<FreshOldList> getOldFeeds(
 //          @Query(ID) int id, @Query(LIMIT) int limit,@Query(TYPE) String type);

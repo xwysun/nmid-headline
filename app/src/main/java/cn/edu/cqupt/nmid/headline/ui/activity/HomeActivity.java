@@ -111,7 +111,12 @@ public class HomeActivity extends AppCompatActivity
         fragment = new ImagesFeedFragment();
         break;
       case 2:
-        fragment = new FavFeedFragment();
+        if(hasUserInfoCache())
+        {
+          startActivity(new Intent(this, MessageListActivity.class));
+        }else {
+          startActivity(new Intent(this, UserInfoActivity.class));
+        }
         break;
     }
 

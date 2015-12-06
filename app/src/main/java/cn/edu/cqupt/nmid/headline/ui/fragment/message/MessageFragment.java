@@ -54,7 +54,8 @@ public class MessageFragment extends Fragment {
     private static final String ARG_CATEGORY = "slug";
     private static final String ARG_FAV = "favorite";
     private int OFFSET=1;
-    int oldfeed_id;
+    private int msg_id;
+    private int oldfeed_id;
     //1为5条，2为10条，3为15条
 
     String TAG = makeLogTag(MessageFragment.class);
@@ -78,7 +79,6 @@ public class MessageFragment extends Fragment {
     LinearLayoutManager mLayoutManager;
     ArrayList<RecMsg> newsBeans = new ArrayList<>();
     MessageAdapter adapter;
-    int msg_id;
     private String title;
     protected int msg_limit = 15;
     private int feed_category = HeadlineService.CATE_ALUMNUS;
@@ -192,7 +192,7 @@ public class MessageFragment extends Fragment {
             mRecyclerview.smoothScrollToPosition(0);
             RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                     .create(HeadlineService.class)
-                    .receiveMessage(OFFSET, classNo).enqueue(new Callback<MessageGson>() {
+                    .receiveMessage(HeadlineService.DEFAULT_OFFSET, classNo).enqueue(new Callback<MessageGson>() {
                 @Override
                 public void onResponse(Response<MessageGson> response) {
                     dispatchSuccess(response.body(), true);
@@ -212,7 +212,7 @@ public class MessageFragment extends Fragment {
             mRecyclerview.smoothScrollToPosition(0);
             RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                     .create(HeadlineService.class)
-                    .receiveTeacherMessage(OFFSET,account,password).enqueue(new Callback<MessageGson>() {
+                    .receiveTeacherMessage(HeadlineService.DEFAULT_OFFSET,account,password).enqueue(new Callback<MessageGson>() {
                 @Override
                 public void onResponse(Response<MessageGson> response) {
                     dispatchSuccess(response.body(), true);
@@ -249,10 +249,11 @@ public class MessageFragment extends Fragment {
         isLoadingMore = true;
         msg_id = newsBeans.get(newsBeans.size()-1).getMessagePid()/5+1;
         oldfeed_id=msg_id;
+        OFFSET++;
         if (Mode.equals("student")&&!classNo.equals("NONE")) {
             RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                     .create(HeadlineService.class)
-                    .receiveMessage(msg_id, classNo).enqueue(new Callback<MessageGson>() {
+                    .receiveMessage(OFFSET, classNo).enqueue(new Callback<MessageGson>() {
                 @Override
                 public void onResponse(Response<MessageGson> response) {
                     dispatchSuccess(response.body(), false);
@@ -268,7 +269,7 @@ public class MessageFragment extends Fragment {
             mRecyclerview.smoothScrollToPosition(0);
             RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                     .create(HeadlineService.class)
-                    .receiveTeacherMessage(msg_id,account,password).enqueue(new Callback<MessageGson>() {
+                    .receiveTeacherMessage(OFFSET,account,password).enqueue(new Callback<MessageGson>() {
                 @Override
                 public void onResponse(Response<MessageGson> response) {
                     dispatchSuccess(response.body(), false);
@@ -313,7 +314,7 @@ public class MessageFragment extends Fragment {
             }
             newsBeans.addAll(headJson.getRecMsg());
             adapter.notifyDataSetChanged();
-            if (newsBeans.get(newsBeans.size()-1).getMessagePid()/5+1==oldfeed_id){
+            if (newsBeans.get(newsBeans.size()-1).getMessagePid()==oldfeed_id){
                 isLoadingMore = true;
             }else {
                 isLoadingMore = false;

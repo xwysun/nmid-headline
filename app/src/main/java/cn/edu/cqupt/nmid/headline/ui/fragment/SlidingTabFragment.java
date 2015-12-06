@@ -52,9 +52,10 @@ public class SlidingTabFragment extends Fragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Log.d(TAG, "onViewCreated");
-    fragments.add(NewsFeedFragment.newInstance("学院经纬", HeadlineService.TYPE_JINGWEI));
-    fragments.add(NewsFeedFragment.newInstance("新闻快讯", HeadlineService.TYPE_NEWS));
-    fragments.add(TeacherListFragment.newInstance("教师名录"));
+    //这奇葩的API
+    fragments.add(NewsFeedFragment.newInstance("    学 院 经 纬    ", HeadlineService.TYPE_JINGWEI));
+    fragments.add(NewsFeedFragment.newInstance("    新 闻 快 讯    ", HeadlineService.TYPE_NEWS));
+    fragments.add(TeacherListFragment.newInstance("    教 师 名 录    "));
 //    fragments.add(NewsFeedFragment.newInstance("通信校友", HeadlineService.CATE_ALUMNUS));
     Log.d(TAG, "setViewPager");
     mTabLayout.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(getActivity()));
@@ -102,7 +103,9 @@ public class SlidingTabFragment extends Fragment {
     }
 
     @Override public int getCount() {
+      Log.e("frag",fragments.size()+"");
       return fragments.size();
+
     }
 
     @Override public CharSequence getPageTitle(int position) {

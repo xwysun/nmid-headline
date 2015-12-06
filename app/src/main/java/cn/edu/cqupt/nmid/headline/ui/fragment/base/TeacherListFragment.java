@@ -77,7 +77,7 @@ public class TeacherListFragment extends Fragment {
     TeacherAdapter adapter;
     int feed_id;
     private String title;
-    protected int feed_limit = 15;
+    protected int feed_limit = HeadlineService.DEFAULT_LIMIT;
     private boolean isFavorite = false;
     private boolean isLoadingMore = false;
 
@@ -174,7 +174,7 @@ public class TeacherListFragment extends Fragment {
         mRecyclerview.smoothScrollToPosition(0);
         RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                 .create(HeadlineService.class)
-                .getTeacherinfo(1).enqueue(new Callback<TeacherList>() {
+                .getTeacherinfo(HeadlineService.FIRST_REQUEST,HeadlineService.DEFAULT_LIMIT).enqueue(new Callback<TeacherList>() {
             @Override public void onResponse(Response<TeacherList> response) {
                 Log.e(TAG, response.body().toString());
                 dispatchSuccess(response.body(), true);
@@ -203,14 +203,11 @@ public class TeacherListFragment extends Fragment {
 
     void loadOldNews() {
         isLoadingMore = true;
-        Log.d("newsBeans","size"+newsBeans.size());
-        feed_id = newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid()/15+1;
+        feed_id = newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid();
         oldfeed_id=feed_id;
-        Log.e("feedid", newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid() + "----" + feed_id + "----" + oldfeed_id);
-
             RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
                     .create(HeadlineService.class)
-                    .getTeacherinfo(feed_id).enqueue(new Callback<TeacherList>() {
+                    .getTeacherinfo(feed_id,feed_limit).enqueue(new Callback<TeacherList>() {
                 @Override public void onResponse(Response<TeacherList> response) {
                     Log.e(TAG, response.body().toString());
                     dispatchSuccess(response.body(), false);
@@ -253,7 +250,7 @@ public class TeacherListFragment extends Fragment {
             }
             newsBeans.addAll(headJson.getGetInfo());
             adapter.notifyDataSetChanged();
-            if (newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid()/15+1==oldfeed_id){
+            if (newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid()==oldfeed_id){
                 isLoadingMore = true;
             }else {
                 isLoadingMore = false;
