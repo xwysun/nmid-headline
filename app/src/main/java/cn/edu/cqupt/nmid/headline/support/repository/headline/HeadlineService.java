@@ -28,8 +28,7 @@ import retrofit.http.Query;
  */
 public interface HeadlineService {
 
-  String END_POINT = "http://115.29.139.53:8080";
-    String END_POINT_TEST="http://121.42.207.100:8080";
+  String END_POINT = "http://121.42.207.100:8080";
     int FIRST_REQUEST=-1;
     int DEFAULT_LIMIT=15;
     int DEFAULT_OFFSET=1;

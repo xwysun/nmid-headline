@@ -35,6 +35,7 @@ import cn.edu.cqupt.nmid.headline.ui.activity.MessageListActivity;
 import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by xwysun on 2015/11/17.
@@ -212,11 +213,11 @@ public class UserInfoFragment extends Fragment {
      * use Retrofit 2.0
      */
     public void getGradeClass() {
-        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                 .create(HeadlineService.class)
                 .getGradesList().enqueue(new Callback<GradeList>() {
             @Override
-            public void onResponse(Response<GradeList> response) {
+            public void onResponse(Response<GradeList> response, Retrofit retrofit) {
                 //怪得不行的JSON解析
                 gradeList=(ArrayList<String>)response.body().getGrades();
                 classesList=(ArrayList<Class>)response.body().getClasses();
@@ -251,11 +252,11 @@ public class UserInfoFragment extends Fragment {
      */
     public void checkAccount(String account,String password)
     {
-        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                 .create(HeadlineService.class)
                 .CheckAccount(account,password).enqueue(new Callback<IsLogin>() {
             @Override
-            public void onResponse(Response<IsLogin> response) {
+            public void onResponse(Response<IsLogin> response, Retrofit retrofit) {
                 isLogin=response.body().getLogin();
                 Log.d("islogin", String.valueOf(isLogin));
                 if (isLogin) {

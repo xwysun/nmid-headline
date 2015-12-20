@@ -40,6 +40,7 @@ import cn.edu.cqupt.nmid.headline.ui.adapter.NewsFeedAdapter;
 import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.LOGD;
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.makeLogTag;
@@ -190,11 +191,11 @@ public class MessageFragment extends Fragment {
     void loadNewFeeds() {
         if (Mode.equals("student")&&!classNo.equals("NONE")) {
             mRecyclerview.smoothScrollToPosition(0);
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                     .create(HeadlineService.class)
                     .receiveMessage(HeadlineService.DEFAULT_OFFSET, classNo).enqueue(new Callback<MessageGson>() {
                 @Override
-                public void onResponse(Response<MessageGson> response) {
+                public void onResponse(Response<MessageGson> response, Retrofit retrofit) {
                     dispatchSuccess(response.body(), true);
                     if (response.body()!=null)
                     {
@@ -210,11 +211,11 @@ public class MessageFragment extends Fragment {
         }else if (Mode.equals("teacher")&&!account.equals("NONE")&&!password.equals("NONE"))
         {
             mRecyclerview.smoothScrollToPosition(0);
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                     .create(HeadlineService.class)
                     .receiveTeacherMessage(HeadlineService.DEFAULT_OFFSET,account,password).enqueue(new Callback<MessageGson>() {
                 @Override
-                public void onResponse(Response<MessageGson> response) {
+                public void onResponse(Response<MessageGson> response, Retrofit retrofit) {
                     dispatchSuccess(response.body(), true);
 
                 }
@@ -251,11 +252,11 @@ public class MessageFragment extends Fragment {
         oldfeed_id=msg_id;
         OFFSET++;
         if (Mode.equals("student")&&!classNo.equals("NONE")) {
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                     .create(HeadlineService.class)
                     .receiveMessage(OFFSET, classNo).enqueue(new Callback<MessageGson>() {
                 @Override
-                public void onResponse(Response<MessageGson> response) {
+                public void onResponse(Response<MessageGson> response, Retrofit retrofit) {
                     dispatchSuccess(response.body(), false);
                 }
 
@@ -267,11 +268,11 @@ public class MessageFragment extends Fragment {
         }else if (Mode.equals("teacher")&&!account.equals("NONE")&&!password.equals("NONE"))
         {
             mRecyclerview.smoothScrollToPosition(0);
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                     .create(HeadlineService.class)
                     .receiveTeacherMessage(OFFSET,account,password).enqueue(new Callback<MessageGson>() {
                 @Override
-                public void onResponse(Response<MessageGson> response) {
+                public void onResponse(Response<MessageGson> response, Retrofit retrofit) {
                     dispatchSuccess(response.body(), false);
                 }
 

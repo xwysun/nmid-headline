@@ -3,12 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".HomeActivity">
     <item
-        android:id="@+id/message"
-        android:showAsAction="always"
-        android:orderInCategory="0"
-        android:icon="@drawable/message"
-        android:title="消息"
-        />
+        android:id="@+id/action_night_mode"
+        android:orderInCategory="1"
+        android:title="@string/settings_night_mode_night"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="2"
+        android:title="@string/action_settings"/>
+
 
 
 </menu>

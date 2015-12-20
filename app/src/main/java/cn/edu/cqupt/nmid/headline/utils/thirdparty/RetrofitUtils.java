@@ -65,4 +65,23 @@ public class RetrofitUtils {
         .build();
     return adapter;
   }
+//public static Retrofit getCachedAdapter(String endpoint) {
+//  Cache cache = null;
+//  OkHttpClient okHttpClient = null;
+//  Retrofit adapter;
+//  try {
+//    File cacheDir =
+//            new File(GlobalContext.getInstance().getCacheDir().getPath(), "pictures.json");
+//    cache = new Cache(cacheDir, 10 * 1024 * 1024);
+//    okHttpClient = new OkHttpClient();
+//    okHttpClient.setCache(cache);
+//  } catch (Exception e) {
+//    e.printStackTrace();
+//  }
+//
+//  adapter = new Retrofit.Builder().baseUrl(endpoint)
+//          .addConverterFactory(GsonConverterFactory.create()).client(okHttpClient)
+//          .build();
+//  return adapter;
+//}
 }

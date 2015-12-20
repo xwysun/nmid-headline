@@ -4,8 +4,7 @@
     tools:context="cn.edu.cqupt.nmid.headline.ui.activity.SettingsActivity">
     <item
         android:id="@+id/openBrower"
-        android:icon="@drawable/newmessage"
-        android:title="外部浏览器打开"
+        android:title="查看更多"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
 </menu>

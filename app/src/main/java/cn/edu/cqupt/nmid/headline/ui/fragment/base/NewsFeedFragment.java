@@ -34,6 +34,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.LOGD;
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.makeLogTag;
@@ -166,11 +167,10 @@ public class NewsFeedFragment extends Fragment {
 
   void loadNewFeeds() {
     mRecyclerview.smoothScrollToPosition(0);
-    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
         .create(HeadlineService.class)
         .getFreshFeeds( HeadlineService.FIRST_REQUEST, HeadlineService.DEFAULT_LIMIT,feed_category).enqueue(new Callback<FreshNewList>() {
-      @Override public void onResponse(Response<FreshNewList> response) {
-        Log.e(TAG, response.body().toString());
+      @Override public void onResponse(Response<FreshNewList> response, Retrofit retrofit) {
         dispatchSuccess(response.body(), true);
       }
 
@@ -200,10 +200,10 @@ public class NewsFeedFragment extends Fragment {
     Log.d("newsBeans","size"+newsBeans.size());
     feed_id = newsBeans.get(newsBeans.size() - 1).getNewsPid();
     oldfeed_id=feed_id;
-    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
         .create(HeadlineService.class)
         .getFreshFeeds(feed_id, feed_limit, feed_category).enqueue(new Callback<FreshNewList>() {
-      @Override public void onResponse(Response<FreshNewList> response) {
+      @Override public void onResponse(Response<FreshNewList> response, Retrofit retrofit) {
         dispatchSuccess(response.body(), false);
         Log.e("oldnews",response.body().toString());
       }

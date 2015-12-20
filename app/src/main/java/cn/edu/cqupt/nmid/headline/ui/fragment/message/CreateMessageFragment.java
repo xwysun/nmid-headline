@@ -49,6 +49,7 @@ import cn.edu.cqupt.nmid.headline.utils.slidedatetimepicker.SlideDateTimePicker;
 import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import rx.internal.util.SubscriptionIndexedRingBuffer;
 
 /**
@@ -208,13 +209,13 @@ public class CreateMessageFragment extends Fragment {
                     Toast.makeText(getActivity(), "请选择班级", Toast.LENGTH_SHORT).show();
                 } else {
                     Gson gson = new Gson();
-                    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+                    RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                             .create(HeadlineService.class)
                             .sendMsg(account, password, title, content, startTimeString, endTimeString,
                                    gson.toJson(classChoose) )
                             .enqueue(new Callback<SendCode>() {
                                 @Override
-                                public void onResponse(Response<SendCode> response) {
+                                public void onResponse(Response<SendCode> response, Retrofit retrofit) {
                                     if (response.body().getCode() == HeadlineService.STATUS_ERR) {
                                         Toast.makeText(getActivity(), "发送失败", Toast.LENGTH_SHORT).show();
                                     } else if (response.body().getCode() == HeadlineService.STATUS_OK) {
@@ -270,11 +271,11 @@ public class CreateMessageFragment extends Fragment {
      * use Retrofit 2.0
      */
     public void getGradeClass() {
-        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                 .create(HeadlineService.class)
                 .getGradesList().enqueue(new Callback<GradeList>() {
             @Override
-            public void onResponse(Response<GradeList> response) {
+            public void onResponse(Response<GradeList> response, Retrofit retrofit) {
                 //怪得不行的JSON解析
                 gradeList = (ArrayList<String>) response.body().getGrades();
                 classesList = (ArrayList<Class>) response.body().getClasses();

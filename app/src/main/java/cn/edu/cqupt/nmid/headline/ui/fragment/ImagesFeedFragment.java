@@ -27,7 +27,7 @@ import cn.edu.cqupt.nmid.headline.support.event.ImageUploadEvent;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.image.ImageService;
-import cn.edu.cqupt.nmid.headline.support.repository.image.bean.ImageInfo;
+import cn.edu.cqupt.nmid.headline.support.repository.image.bean.Datum;
 import cn.edu.cqupt.nmid.headline.support.repository.image.bean.ImageStream;
 import cn.edu.cqupt.nmid.headline.support.service.UploadService;
 import cn.edu.cqupt.nmid.headline.ui.adapter.ImagesFeedAdapter;
@@ -45,12 +45,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.makeLogTag;
 
 public class ImagesFeedFragment extends Fragment {
 
   String TAG = makeLogTag(ImagesFeedFragment.class);
+  String nickname;
 
   Uri outputFileUri;
   private String theLarge;
@@ -76,6 +78,7 @@ public class ImagesFeedFragment extends Fragment {
           .create()
           .show();
     } else {
+      nickname = ShareSDK.getPlatform(QZone.NAME).getDb().getUserName();
       startTakePhoto();
     }
   }
@@ -99,8 +102,8 @@ public class ImagesFeedFragment extends Fragment {
       return;
     }
 
-    String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-    String fileName = "osc_" + timeStamp + ".jpg";// 照片命名
+//    String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    String fileName = "image.jpg";// 照片命名
     File out = new File(savePath, fileName);
     Uri uri = Uri.fromFile(out);
     outputFileUri = uri;
@@ -114,7 +117,7 @@ public class ImagesFeedFragment extends Fragment {
 
   ImagesFeedAdapter adapter;
   LinearLayoutManager mLayoutManager;
-  ArrayList<ImageInfo> images = new ArrayList<>();
+  ArrayList<Datum> images = new ArrayList<>();
   private int lastid = 0;
 
   private boolean isLoadingMore = false;
@@ -170,21 +173,25 @@ public class ImagesFeedFragment extends Fragment {
       return;
     }
     isLoadingMore = true;
+    nickname = ShareSDK.getPlatform(QZone.NAME).getDb().getUserName();
     RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
         .create(ImageService.class)
-        .getRefreshImage(0, 4).enqueue(new Callback<ImageStream>() {
-      @Override public void onResponse(retrofit.Response<ImageStream> response) {
+        .getRefreshImage(-1,nickname, 4).enqueue(new Callback<ImageStream>() {
+      @Override public void onResponse(retrofit.Response<ImageStream> response, Retrofit retrofit) {
         isLoadingMore = false;
         mSwipeRefreshLayout.setRefreshing(false);
         images.clear();
         //bug fix when server return null
-        if (response.body().getStatus() == 1) {
+        if (response.body().getStatus() == 200) {
+          Log.d("Images",response.body().getData().toString());
           images.addAll(response.body().getData());
           adapter.notifyDataSetChanged();
         }
       }
 
+
       @Override public void onFailure(Throwable t) {
+        Log.e("Images",t.toString());
         mSwipeRefreshLayout.setRefreshing(false);
         isLoadingMore = false;
       }
@@ -198,14 +205,15 @@ public class ImagesFeedFragment extends Fragment {
       return;
     }
     isLoadingMore = true;
-    lastid = images.get(images.size() - 1).getIdmember();
+    lastid = images.get(images.size() - 1).getIdmemeber();
+    nickname = ShareSDK.getPlatform(QZone.NAME).getDb().getUserName();
     RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
         .create(ImageService.class)
-        .getROldImage(lastid, 4).enqueue(new Callback<ImageStream>() {
-      @Override public void onResponse(retrofit.Response<ImageStream> response) {
+        .getROldImage(lastid,nickname,  4).enqueue(new Callback<ImageStream>() {
+      @Override public void onResponse(retrofit.Response<ImageStream> response, Retrofit retrofit) {
         isLoadingMore = false;
         //bug fix when server return null
-        if (response.body().getStatus() == 1) {
+        if (response.body().getStatus() == 200) {
           images.addAll(response.body().getData());
           adapter.notifyDataSetChanged();
         }

@@ -129,12 +129,12 @@ public class WebViewFragment extends Fragment {
     //http://202.202.43.205:8086/api/android/newscontent?category=1&id=194
 
     if (getArguments().getString("mode").equals(WebViewFragment.MODE_TEACHER)) {
-      url = HeadlineService.END_POINT_TEST
+      url = HeadlineService.END_POINT
               + "/TongxinHeadline/api/teacherInfo/getResume?id="
               + teacherInfo.getTeacherInfoPid();
     }else
     {
-      url = HeadlineService.END_POINT_TEST
+      url = HeadlineService.END_POINT
               + "/TongxinHeadline/api/news/content?id="
               + feed.getNewsPid()
               + "&type="

@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -127,36 +128,28 @@ public class HomeActivity extends AppCompatActivity
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_home, menu);
-//    if (ThemePref.isNightMode(this)) {
-//      menu.getItem(1).setTitle(R.string.settings_night_mode_day);
-//    } else {
-//      menu.getItem(1).setTitle(R.string.settings_night_mode_night);
-//    }
+    if (ThemePref.isNightMode(this)) {
+      menu.getItem(0).setTitle(R.string.settings_night_mode_day);
+    } else {
+      menu.getItem(0).setTitle(R.string.settings_night_mode_night);
+    }
     return super.onCreateOptionsMenu(menu);
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
-//      case R.id.action_night_mode:
-//        boolean isNightmode = PreferenceUtils.getPrefBoolean(this, KEYS.NIGHTMODE, false);
-//        PreferenceUtils.setPrefBoolean(this, KEYS.NIGHTMODE, !isNightmode);
-//        //GlobalContext.getBus().post(new NightModeEvent(isNightmode));
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        startActivity(intent);
-//        finish();
-//        break;
-//      case R.id.action_settings:
-//        startActivity(new Intent(this, SettingsActivity.class));
-//        break;
-      case R.id.message:
-
-        if(hasUserInfoCache())
-        {
-          startActivity(new Intent(this, MessageListActivity.class));
-        }else {
-          startActivity(new Intent(this, UserInfoActivity.class));
-        }
+      case R.id.action_night_mode:
+        boolean isNightmode = PreferenceUtils.getPrefBoolean(this, KEYS.NIGHTMODE, false);
+        PreferenceUtils.setPrefBoolean(this, KEYS.NIGHTMODE, !isNightmode);
+        //GlobalContext.getBus().post(new NightModeEvent(isNightmode));
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finish();
         break;
+      case R.id.action_settings:
+        startActivity(new Intent(this, SettingsActivity.class));
+        break;
+
       default:
         break;
     }

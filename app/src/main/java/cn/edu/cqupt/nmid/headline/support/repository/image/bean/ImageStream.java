@@ -1,39 +1,54 @@
+
 package cn.edu.cqupt.nmid.headline.support.repository.image.bean;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class ImageStream {
 
-  @SerializedName("status") int status;
-  @SerializedName("data") List<ImageInfo> data = new ArrayList<ImageInfo>();
+    @SerializedName("status")
+    @Expose
+    private Integer status;
+    @SerializedName("data")
+    @Expose
+    private List<Datum> data = new ArrayList<Datum>();
 
-  /**
-   * @return The status
-   */
-  public int getStatus() {
-    return status;
-  }
+    /**
+     * 
+     * @return
+     *     The status
+     */
+    public Integer getStatus() {
+        return status;
+    }
 
-  /**
-   * @param status The status
-   */
-  public void setStatus(int status) {
-    this.status = status;
-  }
+    /**
+     * 
+     * @param status
+     *     The status
+     */
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
-  /**
-   * @return The data
-   */
-  public List<ImageInfo> getData() {
-    return data;
-  }
+    /**
+     * 
+     * @return
+     *     The data
+     */
+    public List<Datum> getData() {
+        return data;
+    }
 
-  /**
-   * @param data The data
-   */
-  public void setData(List<ImageInfo> data) {
-    this.data = data;
-  }
+    /**
+     * 
+     * @param data
+     *     The data
+     */
+    public void setData(List<Datum> data) {
+        this.data = data;
+    }
+
 }

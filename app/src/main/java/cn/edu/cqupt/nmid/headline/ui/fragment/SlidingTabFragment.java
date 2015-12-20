@@ -103,7 +103,6 @@ public class SlidingTabFragment extends Fragment {
     }
 
     @Override public int getCount() {
-      Log.e("frag",fragments.size()+"");
       return fragments.size();
 
     }

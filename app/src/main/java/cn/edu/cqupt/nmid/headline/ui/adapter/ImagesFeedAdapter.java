@@ -16,13 +16,15 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cn.edu.cqupt.nmid.headline.R;
 import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.image.ImageService;
-import cn.edu.cqupt.nmid.headline.support.repository.image.bean.ImageInfo;
+import cn.edu.cqupt.nmid.headline.support.repository.image.bean.Datum;
 import cn.edu.cqupt.nmid.headline.support.repository.image.bean.ImageLikeResult;
 import cn.edu.cqupt.nmid.headline.ui.activity.PhotoViewActivity;
 import cn.edu.cqupt.nmid.headline.utils.TimeUtils;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by leon on 2/2/15.
@@ -52,11 +55,11 @@ public class ImagesFeedAdapter extends RecyclerView.Adapter<ImagesFeedAdapter.St
   private static final int VIEW_TYPE_UPLOADING = 2;
   private final Map<RecyclerView.ViewHolder, AnimatorSet> likeAnimations = new HashMap<>();
   private final ArrayList<Integer> likedPositions = new ArrayList<>();
-  List<ImageInfo> knoImageList;
+  List<Datum> knoImageList;
   boolean showLoadingView = false;
   private boolean isLike = true;
 
-  public ImagesFeedAdapter(List<ImageInfo> knoImageList) {
+  public ImagesFeedAdapter(List<Datum> knoImageList) {
     this.knoImageList = knoImageList;
   }
 
@@ -82,17 +85,17 @@ public class ImagesFeedAdapter extends RecyclerView.Adapter<ImagesFeedAdapter.St
   }
 
   private void bindLoadingFeedItem(StreamViewHolder viewHolder, int position) {
-    final ImageInfo imageInfo = knoImageList.get(position);
+    final Datum imageInfo = knoImageList.get(position);
     Picasso.with(viewHolder.mIv_stream_previous.getContext())
         .load(imageInfo.getPrevirousurl())
         .placeholder(R.drawable.ic_default_bg)
         .resize(0, 400)
         .transform(new GradientTransformation())
         .into(viewHolder.mIv_stream_previous);
-    viewHolder.likesCount.setText(imageInfo.getCount_like() + "人 觉得赞");
+    viewHolder.likesCount.setText(imageInfo.getCountLike() + "人 觉得赞");
 
     viewHolder.nickName.setText(
-        imageInfo.getNickname() + " 发表于 " + TimeUtils.getTimeFromStamp(imageInfo.getUploadtime()));
+            imageInfo.getNickname() + " 发表于 " + imageInfo.getUploadtime());
 
     if (imageInfo.getAvatar() != null) {
       Picasso.with(viewHolder.mIv_avater.getContext())
@@ -100,10 +103,11 @@ public class ImagesFeedAdapter extends RecyclerView.Adapter<ImagesFeedAdapter.St
           .transform(new CircleTransformation())
           .into(viewHolder.mIv_avater);
     }
-
-    if (imageInfo.isHaveClickLike()) {
+    imageInfo.setIsLike(imageInfo.getHaveClickLike());
+    if (imageInfo.getHaveClickLike()) {
       //Log.d("StreamAdapter", "isHaveClickLike");
       viewHolder.mBtn_like.setImageResource(R.drawable.ic_heart_red);
+
     } else {
 
       //Log.d("StreamAdapter", "!isHaveClickLike");
@@ -113,37 +117,48 @@ public class ImagesFeedAdapter extends RecyclerView.Adapter<ImagesFeedAdapter.St
   }
 
   private void disPatchOnClick(final StreamViewHolder viewHolder, final int position,
-      final ImageInfo imageInfo) {
+      final Datum imageInfo) {
 
     viewHolder.mBtn_like.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(final View v) {
-
+      @Override
+      public void onClick(final View v) {
         RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
-            .create(ImageService.class)
-            .likeImage(knoImageList.get(position).getIdmember(),
-                imageInfo.isHaveClickLike() ? 0 : 1)
-            .enqueue(new Callback<ImageLikeResult>() {
-              @Override public void onResponse(Response<ImageLikeResult> response) {
-                if (response.body().status == 1) {
-                  RetrofitUtils.disMsg(v.getContext(),
-                      !imageInfo.isHaveClickLike() ? "Success!" : "取消成功");
-                  int currentLike =
-                      imageInfo.getCount_like() + (imageInfo.isHaveClickLike() ? (0) : (1));
-                  viewHolder.likesCount.setText(currentLike + "人 觉得赞");
-                  updateHeartButton(viewHolder, true, !imageInfo.isHaveClickLike());
-                  imageInfo.setIsLike(!imageInfo.isHaveClickLike());
-                }
-              }
+                .create(ImageService.class)
+                .likeImage(knoImageList.get(position).getIdmemeber(), imageInfo.getNickname(),
+                        imageInfo.getHaveClickLike() ? 0 : 1)
+                .enqueue(new Callback<ImageLikeResult>() {
+                  @Override
+                  public void onResponse(Response<ImageLikeResult> response, Retrofit retrofit) {
+                    if (response.body().getStatus() == 200) {
+                      imageInfo.setHaveClickLike(!imageInfo.getHaveClickLike());
+                      RetrofitUtils.disMsg(v.getContext(),
+                              imageInfo.getHaveClickLike() ? "点赞成功!" : "取消成功");
+                      if (imageInfo.isHaveClickLike()) {
+                        int currentLike =
+                                imageInfo.getCountLike() + (imageInfo.getHaveClickLike() ? (0) : (-1));
+                        viewHolder.likesCount.setText(currentLike + "人 觉得赞");
+                      } else {
+                        int currentLike =
+                                imageInfo.getCountLike() + (imageInfo.getHaveClickLike() ? (1) : (0));
+                        viewHolder.likesCount.setText(currentLike + "人 觉得赞");
+                      }
+                      updateHeartButton(viewHolder, true, imageInfo.getHaveClickLike());
+                    } else {
+                      RetrofitUtils.disMsg(v.getContext(),"点赞或取消失败，请稍后再试");
+                    }
+                  }
 
-              @Override public void onFailure(Throwable t) {
-
-              }
-            });
+                  @Override
+                  public void onFailure(Throwable t) {
+                    RetrofitUtils.disMsg(v.getContext(),"APP内部问题，请稍后再试");
+                  }
+                });
       }
     });
 
     viewHolder.mIv_stream_previous.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
+      @Override
+      public void onClick(View v) {
         Intent intent = new Intent(v.getContext(), PhotoViewActivity.class);
         intent.putExtra(PhotoViewActivity.IMAGE_SIEZ_FULL, imageInfo.getImageurl());
         intent.putExtra(PhotoViewActivity.IMAGE_SIEZ_PREVIOUS, imageInfo.getPrevirousurl());

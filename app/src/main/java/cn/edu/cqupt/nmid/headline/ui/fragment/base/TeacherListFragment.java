@@ -38,6 +38,7 @@ import cn.edu.cqupt.nmid.headline.ui.adapter.TeacherAdapter;
 import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.LOGD;
 import static cn.edu.cqupt.nmid.headline.utils.LogUtils.makeLogTag;
@@ -172,10 +173,10 @@ public class TeacherListFragment extends Fragment {
 
     void loadNewFeeds() {
         mRecyclerview.smoothScrollToPosition(0);
-        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+        RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                 .create(HeadlineService.class)
                 .getTeacherinfo(HeadlineService.FIRST_REQUEST,HeadlineService.DEFAULT_LIMIT).enqueue(new Callback<TeacherList>() {
-            @Override public void onResponse(Response<TeacherList> response) {
+            @Override public void onResponse(Response<TeacherList> response, Retrofit retrofit) {
                 Log.e(TAG, response.body().toString());
                 dispatchSuccess(response.body(), true);
             }
@@ -205,10 +206,10 @@ public class TeacherListFragment extends Fragment {
         isLoadingMore = true;
         feed_id = newsBeans.get(newsBeans.size() - 1).getTeacherInfoPid();
         oldfeed_id=feed_id;
-            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT_TEST)
+            RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                     .create(HeadlineService.class)
                     .getTeacherinfo(feed_id,feed_limit).enqueue(new Callback<TeacherList>() {
-                @Override public void onResponse(Response<TeacherList> response) {
+                @Override public void onResponse(Response<TeacherList> response, Retrofit retrofit) {
                     Log.e(TAG, response.body().toString());
                     dispatchSuccess(response.body(), false);
                 }
