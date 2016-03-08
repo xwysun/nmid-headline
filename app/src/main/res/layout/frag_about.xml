@@ -48,6 +48,22 @@
         android:text="1.0"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal" />
+    <TextView
+        android:id="@+id/about_group"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="开发团队"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal" />
+    <TextView
+        android:id="@+id/about_name"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="许炜阳 苗加谚 马戎 代宇涵"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal" />
 
 
 </LinearLayout>

@@ -19,9 +19,9 @@ public class AboutFragment extends Fragment {
 
   @InjectView(R.id.about_version) TextView mTextView_vision;
 
-  @OnClick(R.id.about_version) void about_version() {
-    FIRUtils.checkForUpdate(getActivity(),true);
-  }
+//  @OnClick(R.id.about_version) void about_version() {
+//    FIRUtils.checkForUpdate(getActivity(),true);
+//  }
 
   @OnClick(R.id.about_nexus_img) void about_nexus_img() {
     Intent intent = new Intent();
@@ -35,7 +35,8 @@ public class AboutFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.frag_about, container, false);
     ButterKnife.inject(this, view);
-    mTextView_vision.setText(BuildConfig.VERSION_NAME);
+    mTextView_vision.setText("2.31");
+//    mTextView_vision.setText(BuildConfig.VERSION_NAME);
     return view;
   }
 }

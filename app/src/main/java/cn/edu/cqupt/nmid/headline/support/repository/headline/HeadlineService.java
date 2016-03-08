@@ -10,6 +10,7 @@ import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.GradeList;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.HeadJson;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.IsLogin;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.MessageGson;
+import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.ProjectNews;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.SendCode;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.TeacherList;
 import retrofit.Call;
@@ -62,11 +63,15 @@ public interface HeadlineService {
 
   //若需更新的新闻条数大于请求数，返回最新的limi1t条新闻，若需更新的新闻条数小于请求数，只返回需更新的新闻。
   String LIMIT = "limit";
+    String OFFSET="offSet";
 
   @GET("/TongxinHeadline/api/news/fresh") Call<FreshNewList> getFreshFeeds(
       @Query(ID) int id, @Query(LIMIT) int limit,@Query(TYPE) String type);
     @GET("/TongxinHeadline/api/teacherInfo/getInfo") Call<TeacherList> getTeacherinfo(
             @Query(ID) int id,@Query(LIMIT) int limit);
+    @GET("/TongxinHeadline/api/tech/getList")Call<ProjectNews>getProjectNews(
+            @Query(ID) int id,@Query(OFFSET) int offset);
+
 //
 //  @GET("/api/news/freshOldNews") Call<FreshOldList> getOldFeeds(
 //          @Query(ID) int id, @Query(LIMIT) int limit,@Query(TYPE) String type);

@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:orientation="vertical"
+    android:id="@+id/background"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,13 +27,13 @@
         android:id="@+id/card_view_grade"
         android:layout_width="match_parent"
         android:layout_height="160dp"
-        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardBackgroundColor="@null"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         card_view:cardCornerRadius="10dp"
-        card_view:cardElevation="24dp">
+        card_view:cardElevation="5dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -106,13 +107,13 @@
         android:id="@+id/card_view_class"
         android:layout_width="match_parent"
         android:layout_height="160dp"
-        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardBackgroundColor="@null"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         card_view:cardCornerRadius="10dp"
-        card_view:cardElevation="24dp">
+        card_view:cardElevation="5dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

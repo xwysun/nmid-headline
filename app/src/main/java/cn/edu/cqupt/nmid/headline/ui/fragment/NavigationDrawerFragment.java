@@ -82,7 +82,7 @@ public class NavigationDrawerFragment extends Fragment
   private boolean mFromSavedInstanceState;
   private boolean mUserLearnedDrawer;
 
-  @OnClick(R.id.navigation_drawer_avatar) void navigation_drawer_avatar() {
+  @OnClick(R.id.navigation_drawer_avatar_holder) void navigation_drawer_avatar() {
 
     ShareSDK.initSDK(getActivity());
     Platform qzone = ShareSDK.getPlatform(getActivity().getApplicationContext(), QZone.NAME);

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,15 +20,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.gson.Gson;
-
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,6 +40,7 @@ import java.util.TimeZone;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cn.edu.cqupt.nmid.headline.R;
+import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.Class;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.GradeList;
@@ -50,7 +51,6 @@ import cn.edu.cqupt.nmid.headline.utils.thirdparty.RetrofitUtils;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import rx.internal.util.SubscriptionIndexedRingBuffer;
 
 /**
  * Created by xwysun on 2015/11/14.
@@ -82,12 +82,14 @@ public class CreateMessageFragment extends Fragment {
     Button classNo;
     @InjectView(R.id.grade)
     Spinner grade;
+    @InjectView(R.id.background)
+    LinearLayout background;
 
 
     private String title;
     private String content;
     private ArrayList<String> classList = new ArrayList<String>();
-    private String gradeChoose=null;
+    private String gradeChoose = null;
     private List<String> classChoose = new ArrayList<String>();
     private ArrayList<String> chooseClasses;
     private boolean[] flags = {true, false, true, false};
@@ -158,8 +160,15 @@ public class CreateMessageFragment extends Fragment {
         ButterKnife.inject(this, view);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         getGradeClass();
-        password=sharedPreferences.getString("password","NONE");
-        account=sharedPreferences.getString("account","NONE");
+        password = sharedPreferences.getString("password", "NONE");
+        account = sharedPreferences.getString("account", "NONE");
+        if (ThemePref.isNightMode(getActivity()))
+        {
+            confirmButton.setBackgroundResource(ThemePref.getBackgroundResColor(getActivity()));
+            background.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(getActivity()));
+            scrollView.setBackgroundResource(ThemePref.getBackgroundResColor(getActivity()));
+        }
+
         return view;
     }
 
@@ -180,18 +189,19 @@ public class CreateMessageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initView();
     }
-    public void initDate(Date date){
+
+    public void initDate(Date date) {
         cal.setTimeInMillis(date.getTime());
         startTimeString = cal.get(Calendar.YEAR) + "年" + (cal.get(Calendar.MONTH) + 1) + "月" +
                 cal.get(Calendar.DAY_OF_MONTH) + "日" + cal.get(Calendar.HOUR_OF_DAY)
                 + ":  " + cal.get(Calendar.MINUTE);
-        endTimeString=startTimeString;
+        endTimeString = startTimeString;
         startTime.setText(startTimeString);
         endTime.setText(endTimeString);
     }
 
     public void initView() {
-        Date date =new Date();
+        Date date = new Date();
         initDate(date);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,11 +209,11 @@ public class CreateMessageFragment extends Fragment {
                 title = editTitle.getText().toString().trim();
                 content = editContent.getText().toString().trim();
 
-                if (title.equals(null)) {
+                if (title.isEmpty()) {
                     Toast.makeText(getActivity(), "请输入标题", Toast.LENGTH_SHORT).show();
-                } else if (content.equals(null)) {
+                } else if (content.isEmpty()) {
                     Toast.makeText(getActivity(), "请输入内容", Toast.LENGTH_SHORT).show();
-                } else if (gradeChoose==null) {
+                } else if (gradeChoose == null) {
                     Toast.makeText(getActivity(), "请选择年级", Toast.LENGTH_SHORT).show();
                 } else if (classChoose.isEmpty()) {
                     Toast.makeText(getActivity(), "请选择班级", Toast.LENGTH_SHORT).show();
@@ -212,7 +222,7 @@ public class CreateMessageFragment extends Fragment {
                     RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                             .create(HeadlineService.class)
                             .sendMsg(account, password, title, content, startTimeString, endTimeString,
-                                   gson.toJson(classChoose) )
+                                    gson.toJson(classChoose))
                             .enqueue(new Callback<SendCode>() {
                                 @Override
                                 public void onResponse(Response<SendCode> response, Retrofit retrofit) {
@@ -228,7 +238,7 @@ public class CreateMessageFragment extends Fragment {
                                 public void onFailure(Throwable t) {
 
                                 }
-                    });
+                            });
                 }
 
 
@@ -237,30 +247,38 @@ public class CreateMessageFragment extends Fragment {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SlideDateTimePicker.Builder(getFragmentManager())
-                        .setListener(startlistener)
+                SlideDateTimePicker.Builder builder= new SlideDateTimePicker.Builder(getFragmentManager());
+                builder.setListener(startlistener)
                         .setInitialDate(new Date())
                                 //.setMinDate(minDate)
                                 //.setMaxDate(maxDate)
-                        .setIs24HourTime(true)
+                        .setIs24HourTime(true);
 //                                .setTheme(SlideDateTimePicker.HOLO_DARK)
                                 //.setIndicatorColor(Color.parseColor("#990000"))
-                        .build()
+                if (ThemePref.isNightMode(getActivity()))
+                {
+                    builder.setTheme(SlideDateTimePicker.HOLO_DARK);
+                }
+                        builder.build()
                         .show();
             }
         });
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SlideDateTimePicker.Builder(getFragmentManager())
-                        .setListener(endlistener)
+                SlideDateTimePicker.Builder builder= new SlideDateTimePicker.Builder(getFragmentManager());
+                builder.setListener(endlistener)
                         .setInitialDate(new Date())
                                 //.setMinDate(minDate)
                                 //.setMaxDate(maxDate)
-                        .setIs24HourTime(true)
-                                //.setTheme(SlideDateTimePicker.HOLO_DARK)
-                                //.setIndicatorColor(Color.parseColor("#990000"))
-                        .build()
+                        .setIs24HourTime(true);
+//                                .setTheme(SlideDateTimePicker.HOLO_DARK)
+                //.setIndicatorColor(Color.parseColor("#990000"))
+                if (ThemePref.isNightMode(getActivity()))
+                {
+                    builder.setTheme(SlideDateTimePicker.HOLO_DARK);
+                }
+                builder.build()
                         .show();
             }
         });
@@ -304,7 +322,7 @@ public class CreateMessageFragment extends Fragment {
 
     public void setGradeClass() {
 
-        ArrayAdapter<String> gradeAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> gradeAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,
                 gradeList);
         gradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         grade.setAdapter(gradeAdapter);
@@ -315,7 +333,7 @@ public class CreateMessageFragment extends Fragment {
                 chooseClasses = classLists.get(position);
                 classChoose.clear();
                 classNo.setText("共0个班");
-                mDialog=setDialog();
+                mDialog = setDialog();
                 classNo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -330,14 +348,13 @@ public class CreateMessageFragment extends Fragment {
             }
         });
     }
-    public Dialog setDialog()
-    {
-        AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
-        String[] classes=new String[chooseClasses.size()];
-        boolean[] isCheck=new boolean[chooseClasses.size()];
-        for (int i=0;i<chooseClasses.size();i++)
-        {
-            classes[i]=chooseClasses.get(i);
+
+    public Dialog setDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        String[] classes = new String[chooseClasses.size()];
+        boolean[] isCheck = new boolean[chooseClasses.size()];
+        for (int i = 0; i < chooseClasses.size(); i++) {
+            classes[i] = chooseClasses.get(i);
         }
         builder.setTitle("请选择班级")
                 .setMultiChoiceItems(classes, isCheck, new DialogInterface.OnMultiChoiceClickListener() {
@@ -348,18 +365,16 @@ public class CreateMessageFragment extends Fragment {
                 });
         builder.setPositiveButton(" 确 定 ", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                for (int i=0;i<chooseClasses.size();i++)
-                {
-                    if (isCheck[i])
-                    {
+                for (int i = 0; i < chooseClasses.size(); i++) {
+                    if (isCheck[i]) {
                         classChoose.add(chooseClasses.get(i));
                     }
 
                 }
-                classNo.setText("共"+classChoose.size()+"个班");
+                classNo.setText("共" + classChoose.size() + "个班");
             }
         });
-        Dialog dialog=builder.create();
+        Dialog dialog = builder.create();
         return dialog;
     }
 

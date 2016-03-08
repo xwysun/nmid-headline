@@ -229,11 +229,9 @@
         </activity>
         <activity android:name=".ui.activity.NoticeActivity" >
         </activity>
-        <activity android:name=".ui.activity.MessageListActivity" >
+        <activity android:name=".ui.activity.WebUtilActivity" >
         </activity>
-        <activity
-            android:name=".ui.activity.LoginActivity"
-            android:theme="@style/NotitleDialog" >
+        <activity android:name=".ui.activity.MessageListActivity" >
         </activity>
         <activity android:name=".ui.activity.UserInfoActivity" >
         </activity>

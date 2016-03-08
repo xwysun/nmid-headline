@@ -21,6 +21,7 @@ import cn.edu.cqupt.nmid.headline.support.pref.ThemePref;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.HeadlineService;
 import cn.edu.cqupt.nmid.headline.support.repository.headline.bean.TeacherList;
 import cn.edu.cqupt.nmid.headline.ui.fragment.base.NewsFeedFragment;
+import cn.edu.cqupt.nmid.headline.ui.fragment.base.ProjectFragment;
 import cn.edu.cqupt.nmid.headline.ui.fragment.base.TeacherListFragment;
 import cn.edu.cqupt.nmid.headline.utils.LogUtils;
 import com.astuetz.PagerSlidingTabStrip;
@@ -53,9 +54,10 @@ public class SlidingTabFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Log.d(TAG, "onViewCreated");
     //这奇葩的API
-    fragments.add(NewsFeedFragment.newInstance("    学 院 经 纬    ", HeadlineService.TYPE_JINGWEI));
-    fragments.add(NewsFeedFragment.newInstance("    新 闻 快 讯    ", HeadlineService.TYPE_NEWS));
-    fragments.add(TeacherListFragment.newInstance("    教 师 名 录    "));
+    fragments.add(NewsFeedFragment.newInstance("学院经纬", HeadlineService.TYPE_JINGWEI));
+    fragments.add(NewsFeedFragment.newInstance("新闻快讯", HeadlineService.TYPE_NEWS));
+    fragments.add(TeacherListFragment.newInstance("教师名录"));
+    fragments.add(ProjectFragment.newInstance("NexusLink"));
 //    fragments.add(NewsFeedFragment.newInstance("通信校友", HeadlineService.CATE_ALUMNUS));
     Log.d(TAG, "setViewPager");
     mTabLayout.setBackgroundResource(ThemePref.getToolbarBackgroundResColor(getActivity()));

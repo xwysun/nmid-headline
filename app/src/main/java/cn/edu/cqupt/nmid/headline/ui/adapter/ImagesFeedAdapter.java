@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.tencent.qzone.QZone;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -118,13 +121,13 @@ public class ImagesFeedAdapter extends RecyclerView.Adapter<ImagesFeedAdapter.St
 
   private void disPatchOnClick(final StreamViewHolder viewHolder, final int position,
       final Datum imageInfo) {
-
+    String nickname=ShareSDK.getPlatform(QZone.NAME).getDb().getUserName();
     viewHolder.mBtn_like.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(final View v) {
         RetrofitUtils.getCachedAdapter(HeadlineService.END_POINT)
                 .create(ImageService.class)
-                .likeImage(knoImageList.get(position).getIdmemeber(), imageInfo.getNickname(),
+                .likeImage(knoImageList.get(position).getIdmemeber(), nickname,
                         imageInfo.getHaveClickLike() ? 0 : 1)
                 .enqueue(new Callback<ImageLikeResult>() {
                   @Override
@@ -144,13 +147,17 @@ public class ImagesFeedAdapter extends RecyclerView.Adapter<ImagesFeedAdapter.St
                       }
                       updateHeartButton(viewHolder, true, imageInfo.getHaveClickLike());
                     } else {
-                      RetrofitUtils.disMsg(v.getContext(),"点赞或取消失败，请稍后再试");
+                      if (nickname.isEmpty()) {
+                        RetrofitUtils.disMsg(v.getContext(), "点赞或取消失败，请先登录");
+                      } else {
+                        RetrofitUtils.disMsg(v.getContext(), "点赞或取消失败，请稍后再试");
+                      }
                     }
                   }
 
                   @Override
                   public void onFailure(Throwable t) {
-                    RetrofitUtils.disMsg(v.getContext(),"APP内部问题，请稍后再试");
+                    RetrofitUtils.disMsg(v.getContext(), "APP内部问题，请稍后再试");
                   }
                 });
       }

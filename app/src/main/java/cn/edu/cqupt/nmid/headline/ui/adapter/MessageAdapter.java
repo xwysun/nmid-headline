@@ -40,7 +40,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         View view =
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_messagelist, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.itemCardHolder.setBackgroundColor(parent.getContext()
+        viewHolder.itemCardHolder.setCardBackgroundColor(parent.getContext()
                 .getResources()
                 .getColor(ThemePref.getItemBackgroundResColor(parent.getContext())));
         return viewHolder;
